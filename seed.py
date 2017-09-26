@@ -12,9 +12,13 @@ def load_user():
 
     user = user_json['user']
 
+    # check if the current user is already in the database
     existing_user = User.query.get(user['id'])
+    
     if existing_user:
         pass
+    
+    # if not add them
     else:
         ravelry_id = user['id']
         username = user['username']
@@ -31,6 +35,10 @@ def load_user():
 def load_status():
     """ load status options into the database """
 
+    # remove any existing rows in status table
+    Status.query.delete()
+
+    # get the status json from the API
     status_json = requests.get("https://api.ravelry.com/" +
                                "projects/project_statuses.json",
                                auth=(os.environ['RAVELRY_ACCESS_KEY'],
@@ -38,6 +46,7 @@ def load_status():
 
     statuses = status_json['project_statuses']
 
+    # Add each status option to the db
     for status in statuses:
         status_id = status['id']
         status = status['name']
@@ -62,37 +71,33 @@ def load_projects(user):
 
     for project in projects:
         project_id = project['id']
+        user_id = project['user_id']
         name = project['name']
         pattern_name = project['pattern_name']
         status_id = project['project_status_id']
         updated_at = project['updated_at']
-        user_id = project['user_id']
-        photos = project['photos_count']
+        started_at = project['started']
+        finished_at = project['completed']
+        photos_count = project['photos_count']
 
-        # check if the project is a WIP (ravelry status codefor WIP is 1)
-        if status_id == 1 or photos > 0:
-            # get the full project details from ravelry
-            details = requests.get('https://api.ravelry.com/projects/%s/%s.json' % (user, project_id),
+        # get the full project details from ravelry
+        details = requests.get('https://api.ravelry.com/projects/%s/%s.json' % (
+                                user, project_id),
                                 auth=(os.environ['RAVELRY_ACCESS_KEY'],
                                 os.environ['RAVELRY_PERSONAL_KEY'])).json()
 
-            project_details = details['project']
-            # get the project notes
-            notes = project_details['notes']
+        project_details = details['project']
+        # get the project notes
+        notes = project_details['notes']
 
-            # get images
-            photos = project_details['photos']
+        # get images
+        photos = project_details['photos']
 
-            for photo in photos:
-                url = photo['square_url']
+        for photo in photos:
+            url = photo['square_url']
 
-                image = Image(url=url, project_id=project_id)
-                db.session.add(image)
-
-        else:
-            # if not a WIP don't collect notes
-            # Done to limmit number of API requests
-            notes = "Notes are only available on curent works in progress"
+            image = Image(url=url, project_id=project_id)
+            db.session.add(image)
 
         # create a project instance
         project = Project(project_id=project_id,
@@ -101,7 +106,9 @@ def load_projects(user):
                           status_id=status_id,
                           updated_at=updated_at,
                           user_id=user_id,
-                          notes=notes)
+                          notes=notes,
+                          started_at=started_at,
+                          finished_at=finished_at)
 
         # add the project to the database
         db.session.add(project)

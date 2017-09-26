@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+    title= {% block title %} Project {% endblock %}
+</head>
+
+<body>
+
+    <ul>
+        {% for message in get_flashed_messages() %}
+            <li>{{message}}</li>
+        {% endfor %}
+    </ul>
+
+    {% block content %}
+        Content goes here
+    {% endblock %}
+</body>
+</html>

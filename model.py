@@ -6,16 +6,14 @@ db = SQLAlchemy()
 # Model defintions
 
 class User(db.Model):
-    """ User info for a ravelry user 
-
-    In MVPwill just be my data possible more with OAuth"""
+    """ User info for a ravelry user """
 
     __tablename__ = "users"
 
     # attributes for users
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
-    profile_img = db.Column(db.Text)
+    profile_img = db.Column(db.String(200))
 
     def __repr__(self):
         return "<User username= %s>" % (self.username)
@@ -32,6 +30,8 @@ class Project(db.Model):
     updated_at = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     notes = db.Column(db.Text)
+    started_at = db.Column(db.DateTime)
+    finished_at = db.Column(db.DateTime)
 
     # relationship between tables
     user = db.relationship("User", backref= 'projects')
@@ -66,7 +66,7 @@ class Image(db.Model):
 
     def __repr__(self):
         return "< Image id= %s>" % (self.img_id)
-        
+
 
 ##############################################################################
 # Helper functions
