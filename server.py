@@ -6,6 +6,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import connect_to_db, db, User, Project, Status, Image
 import datetime
 import tracker
+import requests
+import os
 
 app = Flask(__name__)
 
@@ -72,11 +74,14 @@ def update_project(projectid):
         db.session.add(image)
     db.session.commit()
 
-    # data = {notes: up_notes, project_status_id: up_status}
+    data = {"notes": up_notes, "project_status_id": up_status}
 
-    # user = User.query.get(session['user'])
-    # response = requests.post("https://api.ravelry.com/projects/" +
-    #                           user.username + "/" + projectid + ".json", data)
+    user = User.query.get(session['user'])
+    response = requests.post("https://api.ravelry.com/projects/" +
+                              user.username + "/" + projectid + ".json",
+                              data,
+                              auth=(os.environ['RAVELRY_ACCESS_KEY'],
+                                    os.environ['RAVELRY_PERSONAL_KEY']))
 
     return redirect("/projects/%s" % (projectid))
 
