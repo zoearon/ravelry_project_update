@@ -5,9 +5,25 @@
 {% block content %}
 <div class=userinfo>
 </div>
-<div class=wips>
+<div class=need>
+    <h2> Need Updates </h2>
+    {% if needUpdate %}
+        {% for project, update in needUpdate %}
+            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+            <p> Last update was {{update}} days ago. </p>
+            <br>
+        {% endfor %}
+    {% else %}
+        <h2> No projects need updates </h2>
+    {% endif %}
 </div>
-<div class=finished>
+<div class=updated>
+    <h2> Recently Updated Projects </h2>
+    {% for project, update in updated %}
+        <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        <p> Last update was {{update}} days ago. </p>
+        <br>
+    {% endfor %}
 </div>
 <div class=hibernating></div>
 

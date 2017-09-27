@@ -9,7 +9,7 @@ def load_user():
     user_json = requests.get("https://api.ravelry.com/current_user.json",
                              auth=(os.environ['RAVELRY_ACCESS_KEY'],
                              os.environ['RAVELRY_PERSONAL_KEY'])).json()
-
+    
     user = user_json['user']
 
     # check if the current user is already in the database

@@ -20,21 +20,35 @@ app.jinja_env.undefined = StrictUndefined
 def homepage():
     """ View homepage """
 
-    return render_template('templates/homepage.html')
+    session['user'] = 463097
+    return render_template("homepage.html")
 
 @app.route('/projects')
 def view_projects():
     """ View the current users projects """
 
-    return render_template('templates/projects.html')
+    projects = db.session.query(Project).join(Status).filter(Status.status == 
+               "In progress").all()
 
-@app.route('/projects/<projectid>', method=['GET'])
+    need_update, updated = tracker.sort_projects_by_update(projects)
+
+    return render_template("projects.html",
+                            needUpdate= need_update,
+                            updated=updated)
+
+@app.route('/projects/<projectid>', methods=['GET'])
 def view_details(projectid):
     """ Show the project details and update form for a given project"""
 
-    return render_template('templates/project_details.html')
+    project = Project.query.get(int(projectid))
 
-@app.route('/projects/<projectid>', method=['POST'])
+    images = Image.query.filter_by(project_id = projectid).all()
+
+    return render_template('project_details.html',
+                           project=project,
+                           images=images)
+
+@app.route('/projects/<projectid>', methods=['POST'])
 def update_project(projectid):
     """ Update the database with form inputs """
 

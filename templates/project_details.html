@@ -6,7 +6,15 @@
 <div class=userinfo>
 </div>
 <div class=project>
+    Project Name: {{project.name}}<br>
+    Pattern: {{project.pattern_name}}<br><br>
+    Started: {{project.started_at}}<br>
+    Notes: {{project.notes}}<br>
 </div>
+<div class=pics>
+    {% for img in images %}
+        <img src="{{img.url}}">
+    {% endfor %}
 <div class=update>
 </div>
 
