@@ -16,6 +16,18 @@
         <img src="{{img.url}}">
     {% endfor %}
 <div class=update>
+    <form action="/projects/{{project.project_id}}" method="POST">
+        Notes: <input type="textarea" name="notes" value="{{project.notes}}"><br>
+        Status: <select name="status">
+            <option value="1">In progress</option>
+            <option value="2">Fishished</option>
+            <option value="3">Hibernating</option>
+            <option value="4">Frogged/ Deleted</option>
+        </select><br>
+        Photo URL:<input type="url" name="img-url"><br>
+        <input type="submit"><input type="reset">
+    </form>
+
 </div>
 
 {% endblock %}

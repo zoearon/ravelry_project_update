@@ -27,9 +27,12 @@ def homepage():
 def view_projects():
     """ View the current users projects """
 
-    projects = db.session.query(Project).join(Status).filter(Status.status == 
-               "In progress").all()
+    # Get the projects for the current user and are in progress
+    projects = db.session.query(Project).join(Status).filter(
+               Project.user_id == session['user'],
+               Status.status == "In progress").all()
 
+    # sort the in progress projects into 2 groups based on update needs
     need_update, updated = tracker.sort_projects_by_update(projects)
 
     return render_template("projects.html",
@@ -40,10 +43,13 @@ def view_projects():
 def view_details(projectid):
     """ Show the project details and update form for a given project"""
 
+    # get the project for that project id
     project = Project.query.get(int(projectid))
 
+    # get the images associated with the project
     images = Image.query.filter_by(project_id = projectid).all()
 
+    # show the project details page
     return render_template('project_details.html',
                            project=project,
                            images=images)
@@ -51,6 +57,26 @@ def view_details(projectid):
 @app.route('/projects/<projectid>', methods=['POST'])
 def update_project(projectid):
     """ Update the database with form inputs """
+
+    up_notes =request.form.get('notes')
+    up_status = request.form.get('status')
+    up_image = request.form.get('img-url')
+
+    # get the project for that project id
+    project = Project.query.get(int(projectid))
+
+    project.notes = up_notes
+    project.status_id = int(up_status)
+    if up_image:
+        image = Image(url=up_image, project_id=projectid)
+        db.session.add(image)
+    db.session.commit()
+
+    # data = {notes: up_notes, project_status_id: up_status}
+
+    # user = User.query.get(session['user'])
+    # response = requests.post("https://api.ravelry.com/projects/" +
+    #                           user.username + "/" + projectid + ".json", data)
 
     return redirect("/projects/%s" % (projectid))
 
