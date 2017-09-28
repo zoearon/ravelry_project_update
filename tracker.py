@@ -1,12 +1,13 @@
 
 import datetime
 
+NOW = datetime.datetime.now()
+
 def time_difference_now(time):
     """ Find how much time has passed since a datetime in hours"""
 
-    now = datetime.datetime.now()
 
-    diff = now - time
+    diff = NOW - time
 
     day_seconds = diff.days * 24 * 60 *60
 

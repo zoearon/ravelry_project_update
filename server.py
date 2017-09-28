@@ -67,8 +67,10 @@ def update_project(projectid):
     # get the project for that project id
     project = Project.query.get(int(projectid))
 
+    now = tracker.NOW
     project.notes = up_notes
     project.status_id = int(up_status)
+    project.updated_at = now
     if up_image:
         image = Image(url=up_image, project_id=projectid)
         db.session.add(image)

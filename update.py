@@ -74,6 +74,30 @@ def update_projects(user):
 
     db.session.commit()
 
+################################################################################
+
+update_projects(last_update):
+projects_by_update = requests.get("https://api.ravelry.com/projects/search." +
+                                  "json?status=in-progress&sort=updated&by=" +
+                                   user + "&page=1&page_size=5",
+                                   auth=(os.environ['RAVELRY_ACCESS_KEY'],
+                                         os.environ['RAVELRY_PERSONAL_KEY']))
+
+updated = projects_by_update.json()['projects']
+
+
+for project in updated:
+    #check if the API page has been updated since the last database update
+    if (project['updated_at'] < last_update): 
+        pass
+    else:
+        # update with current website data
+
+
+last_update = NOW
+
+
+
 
 
 if __name__ == "__main__":

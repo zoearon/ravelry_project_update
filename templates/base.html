@@ -5,7 +5,9 @@
 </head>
 
 <body>
-
+    <div class="navbar">
+        <a href="/projects">Projects</a>
+    </div> 
     <ul>
         {% for message in get_flashed_messages() %}
             <li>{{message}}</li>
@@ -15,5 +17,6 @@
     {% block content %}
         Content goes here
     {% endblock %}
+
 </body>
 </html>
