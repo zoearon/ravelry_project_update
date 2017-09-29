@@ -29,17 +29,37 @@ def homepage():
 def view_projects():
     """ View the current users projects """
 
+    # Get finished projects
+    fin_projects = db.session.query(Project).join(Status).filter(
+               Project.user_id == session['user'],
+               Status.status == "Finished").all()
+
+    # Get hibernating projects
+    hib_projects = db.session.query(Project).join(Status).filter(
+               Project.user_id == session['user'],
+               Status.status == "Hibernating").all()
+
+    # Get frogged projects
+    frog_projects = db.session.query(Project).join(Status).filter(
+               Project.user_id == session['user'],
+               Status.status == "Frogged").all()
+
     # Get the projects for the current user and are in progress
-    projects = db.session.query(Project).join(Status).filter(
+    wip_projects = db.session.query(Project).join(Status).filter(
                Project.user_id == session['user'],
                Status.status == "In progress").all()
 
     # sort the in progress projects into 2 groups based on update needs
-    need_update, updated = tracker.sort_projects_by_update(projects)
+    need_update, updated = tracker.sort_projects_by_update(wip_projects)
 
+    count = len(need_update)
     return render_template("projects.html",
+                            finished=fin_projects,
+                            hibernate=hib_projects,
+                            frogged=frog_projects,
                             needUpdate= need_update,
-                            updated=updated)
+                            updated=updated,
+                            count=count)
 
 @app.route('/projects/<projectid>', methods=['GET'])
 def view_details(projectid):
@@ -67,23 +87,9 @@ def update_project(projectid):
     # get the project for that project id
     project = Project.query.get(int(projectid))
 
-    now = tracker.NOW
-    project.notes = up_notes
-    project.status_id = int(up_status)
-    project.updated_at = now
-    if up_image:
-        image = Image(url=up_image, project_id=projectid)
-        db.session.add(image)
-    db.session.commit()
-
-    data = {"notes": up_notes, "project_status_id": up_status}
-
     user = User.query.get(session['user'])
-    response = requests.post("https://api.ravelry.com/projects/" +
-                              user.username + "/" + projectid + ".json",
-                              data,
-                              auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                                    os.environ['RAVELRY_PERSONAL_KEY']))
+
+    tracker.post_project_update(project, up_notes, up_status, up_image, user)
 
     return redirect("/projects/%s" % (projectid))
 

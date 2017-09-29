@@ -1,23 +1,23 @@
 
 import datetime
+from model import db, User, Image
+import requests
+import os
 
 NOW = datetime.datetime.now()
 
 def time_difference_now(time):
-    """ Find how much time has passed since a datetime in hours"""
+    """ Find how much time has passed since a datetime in days"""
 
 
     diff = NOW - time
 
-    day_seconds = diff.days * 24 * 60 *60
+    day_seconds = diff.seconds/(24.00 * 60 * 60.00)
 
-    seconds = day_seconds + diff.seconds
-
-    hours = (seconds/60.0)/60.00
-
-    days = hours/24.00
+    days = diff.days + day_seconds
 
     return days
+
 
 def sort_projects_by_update(projects):
     """ sort a list of project objects into 2 lists based on update """
@@ -34,3 +34,33 @@ def sort_projects_by_update(projects):
 
     return need_update, update
 
+def post_project_update(project, notes, status, image, user):
+    """ update a project in the db and ravelry site """
+
+    project.notes = notes
+    project.status_id = int(status)
+    project.updated_at = NOW
+    if image:
+        post_add_image(project, user, image)
+    db.session.commit()
+
+    data = {"notes": notes, "project_status_id": status}
+
+    response = requests.post("https://api.ravelry.com/projects/%s/%s.json" %
+                              (user.username, project.project_id),
+                              data,
+                              auth=(os.environ['RAVELRY_ACCESS_KEY'],
+                                    os.environ['RAVELRY_PERSONAL_KEY']))
+
+def post_add_image(project, user, photo):
+    """ add an image to the db and project page """
+
+    image = Image(url=photo, project_id=project.project_id)
+    db.session.add(image)
+
+    data = {"source_url": photo}
+    response = requests.post("https://api.ravelry.com/projects/%s/%s/create_photo.json" %
+                              (user.username, project.project_id),
+                              data,
+                              auth=(os.environ['RAVELRY_ACCESS_KEY'],
+                                    os.environ['RAVELRY_PERSONAL_KEY']))

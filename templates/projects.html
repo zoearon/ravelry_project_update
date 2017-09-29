@@ -25,6 +25,27 @@
         <br>
     {% endfor %}
 </div>
-<div class=hibernating></div>
+<div class=finished>
+    <h2>Finished Projects</h2>
+    {% for project in finished %}
+        <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+    {% endfor %}
+</div>
+<div class=hibernating>
+    <h2>Hibernating Projects</h2>
+    {% for project in hibernate %}
+        <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+    {% endfor %}
+</div>
+<div class=frogged>
+    <h2>Frogged Projects</h2>
+    {% for project in frogged %}
+        <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+    {% endfor %}
+</div>
+<script>
+    var mess = "{{count}} projects haven't been updated in 2 weeks!";
+    alert(mess);
+</script>
 
 {% endblock %}
