@@ -25,6 +25,17 @@ def homepage():
     session['user'] = 463097
     return render_template("homepage.html")
 
+@app.route('/user')
+def view_profile():
+    """ view user profile page """
+
+    if 'user' not in session:
+        return redirect("/login")
+
+    user = User.query.get(int(session['user']))
+
+    return render_template("user.html", user=user)
+
 @app.route('/projects')
 def view_projects():
     """ View the current users projects """

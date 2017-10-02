@@ -7,7 +7,17 @@
 <body>
     <div class="navbar">
         <a href="/projects">Projects</a>
-    </div> 
+    </div>
+    {% if 'user' in session %}
+        <div class=userinfo>
+            <a href="/user">Profile</a>
+            <a href="/logout">Log Out</a>
+        </div>
+    {% else %}
+        <div>
+            <a href="/login">Log In</a>
+        </div>
+    {% endif %}
     <ul>
         {% for message in get_flashed_messages() %}
             <li>{{message}}</li>

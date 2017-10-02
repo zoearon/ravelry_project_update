@@ -3,6 +3,7 @@ import datetime
 from model import db, User, Image
 import requests
 import os
+from PIL import Image as pilImage
 
 NOW = datetime.datetime.now()
 
@@ -55,10 +56,34 @@ def post_project_update(project, notes, status, image, user):
 def post_add_image(project, user, photo):
     """ add an image to the db and project page """
 
+    auth=(os.environ['RAVELRY_ACCESS_KEY'], os.environ['RAVELRY_PERSONAL_KEY'])
+
+    # add image to db
     image = Image(url=photo, project_id=project.project_id)
     db.session.add(image)
 
-    data = {"source_url": photo}
+    # change the image to a png for the api
+    response_image = requests.get(photo, stream=True)
+    photo = pilImage.open(response_image.raw)
+    photo.save('photo.png')
+
+    # get an upload token from api
+    upload_token_json = requests.post("https://api.ravelry.com/upload/request_token.json",
+                                    auth=auth).json()
+    upload_token = upload_token_json['upload_token']
+
+    # set up to files for a multipart file upload
+    files = [('file0', ('photo.png', open('photo.png', 'rb'), 'image/png'))]
+    data = {"upload_token": upload_token, "access_key":os.environ['RAVELRY_ACCESS_KEY']}
+    
+    # upload the photo to the api
+    upload_res = requests.post("https://api.ravelry.com/upload/image.json",
+                               files=files,
+                               data=data).json()
+    image_id = upload_res['uploads']['file0']['image_id']
+
+    # assign the image to the project page in the api
+    data = {"image_id": image_id}
     response = requests.post("https://api.ravelry.com/projects/%s/%s/create_photo.json" %
                               (user.username, project.project_id),
                               data,

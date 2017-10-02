@@ -3,49 +3,77 @@
 {% block title %}{% endblock %}
 
 {% block content %}
-<div class=userinfo>
-</div>
 <div class=need>
-    <h2> Need Updates </h2>
+    <button><h2> Need Updates </h2></button>
     {% if needUpdate %}
         {% for project, update in needUpdate %}
-            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
-            <p> Last update was {{update}} days ago. </p>
-            <br>
+            <div class=project>
+                <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+                <p> Last update was {{update}} days ago. </p>
+                <br>
+            </div>
         {% endfor %}
     {% else %}
         <h2> No projects need updates </h2>
     {% endif %}
 </div>
 <div class=updated>
-    <h2> Recently Updated Projects </h2>
+    <button><h2> Recently Updated Projects </h2></button>
     {% for project, update in updated %}
-        <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
-        <p> Last update was {{update}} days ago. </p>
-        <br>
+        <div class=project>
+            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+            <p> Last update was {{update}} days ago. </p>
+            <br>
+        </div>
     {% endfor %}
 </div>
 <div class=finished>
-    <h2>Finished Projects</h2>
+    <button><h2>Finished Projects</h2></button>
     {% for project in finished %}
-        <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        <div class=project>
+            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        </div>
     {% endfor %}
 </div>
 <div class=hibernating>
-    <h2>Hibernating Projects</h2>
+    <button><h2>Hibernating Projects</h2></button>
     {% for project in hibernate %}
-        <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        <div class=project>
+            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        </div>
     {% endfor %}
 </div>
 <div class=frogged>
-    <h2>Frogged Projects</h2>
+    <button><h2>Frogged Projects</h2></button>
     {% for project in frogged %}
-        <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        <div class=project>
+            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        </div>
     {% endfor %}
 </div>
 <script>
     var mess = "{{count}} projects haven't been updated in 2 weeks!";
     alert(mess);
 </script>
+<script src="https://code.jquery.com/jquery.js"></script>
+<script>
+    $('.need').on('click', function() {
+        $('.need div').toggle();
+    });
+    $('.updated').on('click', function() {
+        $('.updated div').toggle();
+    });
+    $('.finished').on('click', function() {
+        $('.finished div').toggle();
+    });
+    $('.hibernating').on('click', function() {
+        $('.hibernating div').toggle();
+    });
+    $('.frogged').on('click', function() {
+        $('.frogged div').toggle();
+    });
+    $('div div').toggle();
 
+
+</script>
 {% endblock %}
