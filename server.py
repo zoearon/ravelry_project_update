@@ -36,6 +36,21 @@ def view_profile():
 
     return render_template("user.html", user=user)
 
+
+@app.route('/logout')
+def logout():
+    """ log out user from the session """
+
+    pop session['user']
+
+    return redirect('/login')
+
+@app.route('/login')
+def login():
+    """ Log the user into the session """
+
+    
+
 @app.route('/projects')
 def view_projects():
     """ View the current users projects """
