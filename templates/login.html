@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<form action="/login" method="POST" id="login">
+    Username: <input type="text" name="username">
+    Password: <input type="password">
+    <input type="submit" value="Login!">
+</form>
+// <script>
+//     $('#login').on('submit', function(evt) {
+//         evt.preventDefault();
+//         $.post('/login', user)
+//     })
+// </script>
+{% endblock %}

@@ -17,8 +17,8 @@
         <img src="{{img.url}}">
     {% endfor %}
 <div class=update>
-    <form action="/projects/{{project.project_id}}" method="POST">
-        Notes: <input type="textarea" name="notes" value="{{project.notes}}"><br>
+    <form action="/projects/{{project.project_id}}" method="POST" id="updateproject">
+        Notes: <textarea name="notes" form="updateproject">{{project.notes}}</textarea><br>
         Status: <select name="status">
             <option value="1">In progress</option>
             <option value="2">Fishished</option>

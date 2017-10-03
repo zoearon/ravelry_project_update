@@ -5,11 +5,10 @@ import requests
 import os
 from PIL import Image as pilImage
 
-NOW = datetime.datetime.now()
-
 def time_difference_now(time):
     """ Find how much time has passed since a datetime in days"""
 
+    NOW = datetime.datetime.now()
 
     diff = NOW - time
 
@@ -35,8 +34,23 @@ def sort_projects_by_update(projects):
 
     return need_update, update
 
+
+def check_username(user):
+    """ check if a user is in the database """
+
+    active_user = User.query.filter_by(username = user).first()
+
+    if active_user:
+        flash( "Login Successful")
+        session['user'] = active_user.user_id
+    else:
+        flash("Login Failed")
+        
+
 def post_project_update(project, notes, status, image, user):
     """ update a project in the db and ravelry site """
+
+    NOW = datetime.datetime.now()
 
     project.notes = notes
     project.status_id = int(status)

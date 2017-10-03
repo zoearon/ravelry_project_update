@@ -41,13 +41,32 @@ def view_profile():
 def logout():
     """ log out user from the session """
 
-    pop session['user']
+    session.clear()
 
     return redirect('/login')
 
 @app.route('/login')
 def login():
     """ Log the user into the session """
+
+    return render_template("login.html")
+
+@app.route('/login', methods=['POST'])
+def check_user():
+    """ log the user in """
+
+    user = request.form.get("username")
+    # tracker.check_username(user)
+
+    active_user = User.query.filter_by(username = user).first()
+
+    if active_user:
+        flash( "Login Successful")
+        session['user'] = active_user.user_id
+        return redirect('/user')
+    else:
+        flash("Login Failed")
+        return redirect('/login')
 
     
 
@@ -73,7 +92,7 @@ def view_projects():
     # Get the projects for the current user and are in progress
     wip_projects = db.session.query(Project).join(Status).filter(
                Project.user_id == session['user'],
-               Status.status == "In progress").all()
+               Status.status == "In progress").order_by(Project.updated_at).all()
 
     # sort the in progress projects into 2 groups based on update needs
     need_update, updated = tracker.sort_projects_by_update(wip_projects)
