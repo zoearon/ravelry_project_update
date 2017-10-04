@@ -3,6 +3,10 @@
 {% block title %}{% endblock %}
 
 {% block content %}
+<div id="project-chart">
+  <canvas id="donutChart"></canvas>
+  <div id="projectLegend" class="chart-legend"></div>
+</div>
 <div class=need>
     <button><h2> Need Updates </h2></button>
     {% if needUpdate %}
@@ -52,10 +56,13 @@
     {% endfor %}
 </div>
 <script>
-    var mess = "{{count}} projects haven't been updated in 2 weeks!";
+    var mess = "{{counts['need update']}}projects haven't been updated in 2 weeks!";
     alert(mess);
 </script>
 <script src="https://code.jquery.com/jquery.js"></script>
+<script src=
+  "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.js">
+</script>
 <script>
     $('.need').on('click', function() {
         $('.need div').toggle();
@@ -74,6 +81,21 @@
     });
     $('div div').toggle();
 
+    var options = { responsive: true };
+
+    var ctx_donut = $("#donutChart").get(0).getContext("2d");
+
+    var counts = {{dict|safe}};
+
+    // $.get("/project-types.json", function (data) {
+        var myDonutChart = new Chart(ctx_donut, {
+                                                type: 'doughnut',
+                                                data: counts,
+                                                options: options
+                                              });
+        $('#projectLegend').html(myDonutChart.generateLegend());
+    // });
 
 </script>
+
 {% endblock %}

@@ -106,14 +106,69 @@ def view_projects():
     # sort the in progress projects into 2 groups based on update needs
     need_update, updated = tracker.sort_projects_by_update(wip_projects)
 
-    count = len(need_update)
+    projects_by_type = {"finished": fin_projects,
+                        "hibernate": hib_projects,
+                        "frogged": frog_projects,
+                        "need update": need_update,
+                        "updated": updated}
+
+    counts = {k: len(v) for k,v in projects_by_type.items()}
+    print counts
+
+    data_dict = {
+                "labels": [k for k in counts.keys()],
+                "datasets": [
+                    {
+                        "data": [v for k, v in counts.items()],
+                        "backgroundColor": [
+                            "#FF6384",
+                            "#36A2EB",
+                            "red",
+                            "blue",
+                            "green",
+                        ],
+                        "hoverBackgroundColor": [
+                            "#FF6384",
+                            "#36A2EB",
+                        ]
+                    }]
+            }
+
+    # data_dict = jsonify(data_dict)
+
     return render_template("projects.html",
                             finished=fin_projects,
                             hibernate=hib_projects,
                             frogged=frog_projects,
                             needUpdate= need_update,
                             updated=updated,
-                            count=count)
+                            counts=counts,
+                            dict=data_dict)
+
+@app.route('/project-types.json')
+def project_types_data():
+    """Return data about Melon Sales."""
+
+    data_dict = {
+                "labels": [
+                    "Christmas Melon",
+                    "Crenshaw",
+                ],
+                "datasets": [
+                    {
+                        "data": [300, 50],
+                        "backgroundColor": [
+                            "#FF6384",
+                            "#36A2EB",
+                        ],
+                        "hoverBackgroundColor": [
+                            "#FF6384",
+                            "#36A2EB",
+                        ]
+                    }]
+            }
+
+    return jsonify(data_dict)
 
 @app.route('/projects/<projectid>', methods=['GET'])
 def view_details(projectid):
