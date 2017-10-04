@@ -29,9 +29,11 @@ def homepage():
 def view_profile():
     """ view user profile page """
 
+    # check if there is a current user
     if 'user' not in session:
         return redirect("/login")
 
+    # query for current user
     user = User.query.get(int(session['user']))
 
     return render_template("user.html", user=user)
@@ -41,29 +43,36 @@ def view_profile():
 def logout():
     """ log out user from the session """
 
+    # remove any users from the session
     session.clear()
 
+    # redirect back to login
     return redirect('/login')
 
-@app.route('/login')
+@app.route('/login', methods=['GET'])
 def login():
-    """ Log the user into the session """
+    """ show the login form """
 
+    # render login page
     return render_template("login.html")
 
 @app.route('/login', methods=['POST'])
 def check_user():
     """ log the user in """
 
+    # get the user name from the post form
     user = request.form.get("username")
     # tracker.check_username(user)
 
+    # query for any users with that username
     active_user = User.query.filter_by(username = user).first()
 
+    # if there is a matching user
     if active_user:
         flash( "Login Successful")
         session['user'] = active_user.user_id
         return redirect('/user')
+    # if there is not a user with that username
     else:
         flash("Login Failed")
         return redirect('/login')
@@ -132,10 +141,13 @@ def update_project(projectid):
     # get the project for that project id
     project = Project.query.get(int(projectid))
 
+    # get the current user's user object
     user = User.query.get(session['user'])
 
+    # update the db and ravelry page
     tracker.post_project_update(project, up_notes, up_status, up_image, user)
 
+    # go to the project page
     return redirect("/projects/%s" % (projectid))
 
 

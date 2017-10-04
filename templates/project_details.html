@@ -33,6 +33,11 @@
 </div>
 <script src="https://code.jquery.com/jquery.js"></script>
 <script>
-
+    // set the status intially to the current status
+    $("#updateproject select option").each( function() {
+        if ($(this).val() == {{project.status_id|tojson}}) {
+            $(this).attr('selected', true);
+        } 
+    });
 </script>
 {% endblock %}

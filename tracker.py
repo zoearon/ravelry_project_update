@@ -38,14 +38,14 @@ def sort_projects_by_update(projects):
 def check_username(user):
     """ check if a user is in the database """
 
-    active_user = User.query.filter_by(username = user).first()
+    # active_user = User.query.filter_by(username = user).first()
 
-    if active_user:
-        flash( "Login Successful")
-        session['user'] = active_user.user_id
-    else:
-        flash("Login Failed")
-        
+    # if active_user:
+    #     flash( "Login Successful")
+    #     session['user'] = active_user.user_id
+    # else:
+    #     flash("Login Failed")
+
 
 def post_project_update(project, notes, status, image, user):
     """ update a project in the db and ravelry site """
@@ -96,6 +96,9 @@ def post_add_image(project, user, photo):
                                data=data).json()
     image_id = upload_res['uploads']['file0']['image_id']
 
+    # delete photo now that it is uploaded
+    os.remove('photo.png')
+    
     # assign the image to the project page in the api
     data = {"image_id": image_id}
     response = requests.post("https://api.ravelry.com/projects/%s/%s/create_photo.json" %
