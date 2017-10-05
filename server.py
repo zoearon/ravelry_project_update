@@ -22,7 +22,7 @@ app.jinja_env.undefined = StrictUndefined
 def homepage():
     """ View homepage """
 
-    session['user'] = 463097
+    # session['user'] = 463097
     return render_template("homepage.html")
 
 @app.route('/user')
@@ -113,13 +113,12 @@ def view_projects():
                         "updated": updated}
 
     counts = {k: len(v) for k,v in projects_by_type.items()}
-    print counts
 
     data_dict = {
-                "labels": [k for k in counts.keys()],
+                "labels": [k for k in sorted(counts.keys())],
                 "datasets": [
                     {
-                        "data": [v for k, v in counts.items()],
+                        "data": [v for k, v in sorted(counts.items())],
                         "backgroundColor": [
                             "#FF6384",
                             "#36A2EB",
@@ -145,30 +144,6 @@ def view_projects():
                             counts=counts,
                             dict=data_dict)
 
-@app.route('/project-types.json')
-def project_types_data():
-    """Return data about Melon Sales."""
-
-    data_dict = {
-                "labels": [
-                    "Christmas Melon",
-                    "Crenshaw",
-                ],
-                "datasets": [
-                    {
-                        "data": [300, 50],
-                        "backgroundColor": [
-                            "#FF6384",
-                            "#36A2EB",
-                        ],
-                        "hoverBackgroundColor": [
-                            "#FF6384",
-                            "#36A2EB",
-                        ]
-                    }]
-            }
-
-    return jsonify(data_dict)
 
 @app.route('/projects/<projectid>', methods=['GET'])
 def view_details(projectid):
@@ -210,6 +185,7 @@ if __name__ == "__main__":
     # set up debug toolbar
     app.debug = True
     app.jinja_env.auto_reload = app.debug
+    app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
     connect_to_db(app)
 

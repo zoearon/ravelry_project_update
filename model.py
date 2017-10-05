@@ -70,13 +70,34 @@ class Image(db.Model):
 
 ##############################################################################
 # Helper functions
+def example_data():
+    user = User(username="abc",
+                user_id=1,
+                )
+    db.session.add(user)
+    project = Project(project_id=1,
+                      name="knit hat",
+                      pattern_name="basic",
+                      status_id=1,
+                      updated_at='2012-10-01 00:00:00',
+                      user_id=1,
+                      notes="just a basic hat",
+                      started_at='2014-10-01 00:00:00',
+                      )
+    db.session.add(project)
+    status = Status(status_id=1, status="Test")
+    db.session.add(status)
+    image = Image(url="https://i.vimeocdn.com/portrait/58832_300x300",
+                  project_id=1,
+                  )
+    db.session.add(image)
+    db.session.commit()
 
-
-def connect_to_db(app):
+def connect_to_db(app, db_uri="postgresql:///projects"):
     """Connect the database to our Flask app."""
 
     # Configure to use our PstgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///projects'
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
