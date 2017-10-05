@@ -12,11 +12,11 @@ def time_difference_now(time):
 
     diff = NOW - time
 
-    day_seconds = diff.seconds/(24.00 * 60 * 60.00)
+    # day_seconds = diff.seconds/(24.00 * 60 * 60.00)
 
-    days = diff.days + day_seconds
+    # days = diff.days + day_seconds
 
-    return days
+    return diff.days
 
 
 def sort_projects_by_update(projects):
@@ -47,62 +47,14 @@ def check_username(user):
     #     flash("Login Failed")
 
 
-def post_project_update(project, notes, status, image, user):
+def post_project_db_update(project, notes, status, image, user):
     """ update a project in the db and ravelry site """
-
-    NOW = datetime.datetime.now()
 
     project.notes = notes
     project.status_id = int(status)
-    project.updated_at = NOW
+    project.updated_at = datetime.datetime.now()
     if image:
-        post_add_image(project, user, image)
+        image = Image(url=photo, project_id=project.project_id)
+        db.session.add(image)
     db.session.commit()
-
-    data = {"notes": notes, "project_status_id": status}
-
-    response = requests.post("https://api.ravelry.com/projects/%s/%s.json" %
-                              (user.username, project.project_id),
-                              data,
-                              auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                                    os.environ['RAVELRY_PERSONAL_KEY']))
-
-def post_add_image(project, user, photo):
-    """ add an image to the db and project page """
-
-    auth=(os.environ['RAVELRY_ACCESS_KEY'], os.environ['RAVELRY_PERSONAL_KEY'])
-
-    # add image to db
-    image = Image(url=photo, project_id=project.project_id)
-    db.session.add(image)
-
-    # change the image to a png for the api
-    response_image = requests.get(photo, stream=True)
-    photo = pilImage.open(response_image.raw)
-    photo.save('photo.png')
-
-    # get an upload token from api
-    upload_token_json = requests.post("https://api.ravelry.com/upload/request_token.json",
-                                    auth=auth).json()
-    upload_token = upload_token_json['upload_token']
-
-    # set up to files for a multipart file upload
-    files = [('file0', ('photo.png', open('photo.png', 'rb'), 'image/png'))]
-    data = {"upload_token": upload_token, "access_key":os.environ['RAVELRY_ACCESS_KEY']}
     
-    # upload the photo to the api
-    upload_res = requests.post("https://api.ravelry.com/upload/image.json",
-                               files=files,
-                               data=data).json()
-    image_id = upload_res['uploads']['file0']['image_id']
-
-    # delete photo now that it is uploaded
-    os.remove('photo.png')
-    
-    # assign the image to the project page in the api
-    data = {"image_id": image_id}
-    response = requests.post("https://api.ravelry.com/projects/%s/%s/create_photo.json" %
-                              (user.username, project.project_id),
-                              data,
-                              auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                                    os.environ['RAVELRY_PERSONAL_KEY']))

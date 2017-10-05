@@ -4,8 +4,9 @@ from flask import Flask, jsonify,render_template, redirect, request, flash, sess
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Project, Status, Image
-import datetime
+# import datetime
 import tracker
+import api
 import requests
 import os
 
@@ -16,7 +17,6 @@ app.secret_key = "secret"
 
 # Raise error if undefine Jinja variable
 app.jinja_env.undefined = StrictUndefined
-
 
 @app.route('/')
 def homepage():
@@ -38,7 +38,6 @@ def view_profile():
 
     return render_template("user.html", user=user)
 
-
 @app.route('/logout')
 def logout():
     """ log out user from the session """
@@ -53,7 +52,6 @@ def logout():
 def login():
     """ show the login form """
 
-    # render login page
     return render_template("login.html")
 
 @app.route('/login', methods=['POST'])
@@ -62,7 +60,6 @@ def check_user():
 
     # get the user name from the post form
     user = request.form.get("username")
-    # tracker.check_username(user)
 
     # query for any users with that username
     active_user = User.query.filter_by(username = user).first()
@@ -75,9 +72,7 @@ def check_user():
     # if there is not a user with that username
     else:
         flash("Login Failed")
-        return redirect('/login')
-
-    
+        return redirect('/login')    
 
 @app.route('/projects')
 def view_projects():
@@ -197,8 +192,16 @@ def update_project(projectid):
     # get the current user's user object
     user = User.query.get(session['user'])
 
-    # update the db and ravelry page
+    # update the db
     tracker.post_project_update(project, up_notes, up_status, up_image, user)
+
+    # update api/ ravelry project page
+    api.post_project_api_update(project, up_notes, up_status, user)
+    if up_image:
+        api.post_add_image(project, user, up_image)
+
+    # flash message about update
+    flash("Update Successful")
 
     # go to the project page
     return redirect("/projects/%s" % (projectid))

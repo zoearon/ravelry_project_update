@@ -2,6 +2,7 @@ import unittest
 
 from server import app
 from model import db, example_data, connect_to_db
+import api
 
 
 class ServerTests(unittest.TestCase):
@@ -26,6 +27,13 @@ class ServerTests(unittest.TestCase):
         self.assertIn("username", result.data)
         self.assertNotIn("abc", result.data)
 
+    def test_user_no_user(self):
+        """Test user page works. """
+
+        result = self.client.get("/user", follow_redirects=True)
+        self.assertIn("Log In", result.data)
+        self.assertIn("password", result.data)
+        self.assertNotIn("abc", result.data)
 
 class ServerTestsDatabaseSession(unittest.TestCase):
     """Flask tests that use the database."""
@@ -46,21 +54,23 @@ class ServerTestsDatabaseSession(unittest.TestCase):
         db.create_all()
         example_data()
 
+        def _mock_post_add_image(project, user, up_image):
+            pass
+
+        api.post_add_image = _mock_post_add_image
+
+        def _mock_post_project_api_update(project, up_notes,
+                                      up_status, up_image,
+                                      user):
+            pass
+
+        api.post_project_api_update = _mock_post_project_api_update
+
+
         # add a session
         with self.client as c:
             with c.session_transaction() as sess:
                 sess['user'] = 1
-
-        # def _mock_post_project_update(project, up_notes,
-        #                               up_status, up_image,
-        #                               user):
-        #     project.notes = notes
-        #     project.status_id = int(status)
-        #     db.session.commit()
-        #     pass
-
-        # server.tracker.post_project_update = _mock_post_project_update
-
 
     def tearDown(self):
         """Do at end of every test."""
@@ -101,6 +111,15 @@ class ServerTestsDatabaseSession(unittest.TestCase):
         self.assertIn("abc", result.data)
         self.assertIn("Log Out", result.data)
         self.assertNotIn("password", result.data)
+
+    def test_login_fail(self):
+        """ Test login page works. """
+        result = self.client.post("/login",
+                                  data={'username': "123", 'password': "joe"},
+                                  follow_redirects=True)
+        self.assertIn("username", result.data)
+        self.assertNotIn("Successful", result.data)
+        self.assertIn("password", result.data)
 
     def test_project_details(self):
         """Test project details page. """
