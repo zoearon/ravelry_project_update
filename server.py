@@ -133,7 +133,29 @@ def view_projects():
                     }]
             }
 
-    # data_dict = jsonify(data_dict)
+    wip_dict = {
+                "labels": ["WIP"],
+                "datasets": [
+                    {
+                        "label": "Need Update",
+                        "data": [counts['need update']],
+                        "backgroundColor": [
+                            "red"
+                        ],
+                        "hoverBackgroundColor": [
+                            "red"
+                        ]
+                    },
+                    {
+                        "label": "Updated",
+                        "data": [counts['updated']],
+                        "backgroundColor": [
+                            "green"
+                        ],
+                        "hoverBackgroundColor": [
+                            "green"
+                        ]
+                    }] }
 
     return render_template("projects.html",
                             finished=fin_projects,
@@ -142,7 +164,8 @@ def view_projects():
                             needUpdate= need_update,
                             updated=updated,
                             counts=counts,
-                            dict=data_dict)
+                            dict=data_dict,
+                            wip=wip_dict)
 
 
 @app.route('/projects/<projectid>', methods=['GET'])

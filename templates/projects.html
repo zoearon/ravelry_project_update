@@ -7,6 +7,10 @@
   <canvas id="donutChart"></canvas>
   <div id="projectLegend" class="chart-legend"></div>
 </div>
+<div id="update-chart">
+  <canvas id="donutChart2"></canvas>
+  <div id="updateLegend" class="chart-legend"></div>
+</div>
 <div class=need>
     <button><h2> Need Updates </h2></button>
     {% if needUpdate %}
@@ -85,16 +89,34 @@
 
     var ctx_donut = $("#donutChart").get(0).getContext("2d");
 
+    var ctx_donut2 = $("#donutChart2").get(0).getContext("2d");
+
     var counts = {{dict|safe}};
 
-    // $.get("/project-types.json", function (data) {
-        var myDonutChart = new Chart(ctx_donut, {
-                                                type: 'doughnut',
-                                                data: counts,
-                                                options: options
-                                              });
-        $('#projectLegend').html(myDonutChart.generateLegend());
-    // });
+    var wips = {{wip|safe}};
+
+    var myDonutChart = new Chart(ctx_donut, {
+                                            type: 'doughnut',
+                                            data: counts,
+                                            options: options
+                                          });
+    $('#projectLegend').html(myDonutChart.generateLegend());
+
+    var stackedBar = new Chart(ctx_donut2, {
+        type: 'horizontalBar',
+        data: wips,
+        options: {
+            scales: {
+                xAxes: [{
+                    stacked: true
+                }],
+                yAxes: [{
+                    stacked: true
+                }]
+            }
+        }
+    });
+    $('#updateLegend').html(myDonutChart.generateLegend());
 
 </script>
 
