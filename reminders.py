@@ -9,6 +9,6 @@ def send_message():
 schedule.every(15).minutes.do(send_message)
 
 if __name__ == "__main__":
-    While True:
+    while True:
         schedule.run_pending()
         time.sleep(1)
