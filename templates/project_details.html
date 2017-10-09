@@ -7,6 +7,7 @@
 </div>
 <div class=project>
     Project Name: {{project.name}}<br>
+    <a href="https://www.ravelry.com/projects/{{username}}/{{project.rav_page}}">Ravelry Page</a>
     Pattern: {{project.pattern_name}}<br>
     Last Updated: {{project.updated_at}}<br>
     Status: {{project.status.status if project.status else " "}}<br>

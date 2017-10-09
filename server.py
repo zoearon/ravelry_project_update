@@ -179,10 +179,14 @@ def view_details(projectid):
     project = project_images
     images = project.images
 
+    # get username
+    username = db.session.query(User.username).filter(User.user_id == session['user']).one()[0]
+
     # show the project details page
     return render_template('project_details.html',
                            project=project,
-                           images=images)
+                           images=images,
+                           username=username)
 
 @app.route('/projects/<projectid>', methods=['POST'])
 def update_project(projectid):
