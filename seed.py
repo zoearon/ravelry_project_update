@@ -22,11 +22,15 @@ def load_user():
     else:
         ravelry_id = user['id']
         username = user['username']
-        profile_img = user['small_photo_url']
+        profile_img = user['photo_url']
+        update_time = 14
+        password = "password"
 
         new_user = User(user_id=ravelry_id,
                         username=username,
-                        profile_img=profile_img)
+                        profile_img=profile_img,
+                        update_time=update_time,
+                        password=password)
 
         db.session.add(new_user)
 
@@ -79,6 +83,8 @@ def load_projects(user):
         started_at = project['started']
         finished_at = project['completed']
         photos_count = project['photos_count']
+        progress = project['progress']
+        rav_page = project['permalink']
 
         # get the full project details from ravelry
         details = requests.get('https://api.ravelry.com/projects/%s/%s.json' % (
@@ -94,7 +100,7 @@ def load_projects(user):
         photos = project_details['photos']
 
         for photo in photos:
-            url = photo['square_url']
+            url = photo['medium2_url']
 
             image = Image(url=url, project_id=project_id)
             db.session.add(image)
@@ -108,7 +114,9 @@ def load_projects(user):
                           user_id=user_id,
                           notes=notes,
                           started_at=started_at,
-                          finished_at=finished_at)
+                          finished_at=finished_at,
+                          progress=progress,
+                          rav_page=rav_page)
 
         # add the project to the database
         db.session.add(project)
@@ -126,8 +134,6 @@ if __name__ == "__main__":
 
     # In case tables haven't been created, create them
     db.create_all()
-
-
 
     load_user()
     load_status()

@@ -7,16 +7,24 @@
 </div>
 <div class=project>
     Project Name: {{project.name}}<br>
-    Pattern: {{project.pattern_name}}<br><br>
-    Status: {{project.status.status}}<br>
-    Started: {{project.started_at}}<br>
-    Notes: {{project.notes}}<br>
+    Pattern: {{project.pattern_name}}<br>
+    Last Updated: {{project.updated_at}}<br>
+    Status: {{project.status.status if project.status else " "}}<br>
+    Started: {{project.started_at if project.started_at else " "}}<br>
+    Notes: {{project.notes if project.notes else " "}}<br>
+    Progress: {{project.progress}}<div class="progress">
+  <div class="progress-bar" role="progressbar" aria-valuenow="{{project.progress}}"
+  aria-valuemin="0" aria-valuemax="100" style="width: {{project.progress}}%">
+<!--     <span class="sr-only">70% Complete</span> -->
+  </div>
+</div>
 </div>
 <div class=pics>
     {% for img in images %}
         <img src="{{img.url}}">
     {% endfor %}
 <div class=update>
+    <h3> Update Project </h3>
     <form action="/projects/{{project.project_id}}" method="POST" id="updateproject">
         Notes: <textarea name="notes" form="updateproject">{{project.notes}}</textarea><br>
         Status: <select name="status">
@@ -25,6 +33,10 @@
             <option value="3">Hibernating</option>
             <option value="4">Frogged/ Deleted</option>
         </select><br>
+        <div id="slidecontainer">
+          <input type="range" min="1" max="100" value="{{project.progress|safe}}" class="slider" id="myRange" name="progress">
+          <span id="loacation"></span>
+        </div>
         <input type="hidden" name="finished_at"><br>
         Photo URL:<input type="url" name="img-url"><br>
         <input type="submit"><input type="reset">
@@ -39,5 +51,14 @@
             $(this).attr('selected', true);
         } 
     });
+
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("loacation");
+    output.innerHTML = slider.value; // Display the default slider value
+
+    // Update the current slider value (each time you drag the slider handle)
+    slider.oninput = function() {
+        output.innerHTML = this.value;
+    }
 </script>
 {% endblock %}

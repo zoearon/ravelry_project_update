@@ -1,9 +1,9 @@
 import unittest
+from selenium import webdriver
 
 from server import app
 from model import db, example_data, connect_to_db
 import api
-
 
 class ServerTests(unittest.TestCase):
     """Tests for my party site."""
@@ -60,8 +60,7 @@ class ServerTestsDatabaseSession(unittest.TestCase):
         api.post_add_image = _mock_post_add_image
 
         def _mock_post_project_api_update(project, up_notes,
-                                      up_status, up_image,
-                                      user):
+                                      up_status, user):
             pass
 
         api.post_project_api_update = _mock_post_project_api_update
@@ -110,6 +109,7 @@ class ServerTestsDatabaseSession(unittest.TestCase):
                                   follow_redirects=True)
         self.assertIn("abc", result.data)
         self.assertIn("Log Out", result.data)
+        self.assertIn("Successful", result.data)
         self.assertNotIn("password", result.data)
 
     def test_login_fail(self):
@@ -132,6 +132,34 @@ class ServerTestsDatabaseSession(unittest.TestCase):
         self.assertIn("https://i.vimeocdn.com/portrait/58832_300x300",
                       result.data)
 
+    def test_project_details_post(self):
+        """Test project details page. """
+
+        result = self.client.post("/projects/1",
+                                  data={'notes':"FINISHED", 'img-url':'https://cdn0.iconfinder.com/data/icons/the-essential/30/check_ok-512.png'},
+                                  follow_redirects=True)
+        self.assertIn("Log Out", result.data)
+        self.assertIn("knit hat", result.data)
+        self.assertIn("Test", result.data)
+        self.assertIn('FINISHED', result.data)
+        self.assertNotIn("abc", result.data)
+        self.assertIn("https://i.vimeocdn.com/portrait/58832_300x300",
+                      result.data)
+        self.assertIn("https://cdn0.iconfinder.com/data/icons/the-essential/30/check_ok-512.png",
+                      result.data)
+        self.assertIn("Successful", result.data)
+
+class SeliniumTest(unittest.TestCase):
+
+    def setUp(self):
+        self.browser = webdriver.Firefox()
+
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_title(self):
+        self.browser.get('http://localhost:5000/')
+        self.assertEqual(self.browser.title, 'Projects')
 
 if __name__ == "__main__":
     unittest.main()

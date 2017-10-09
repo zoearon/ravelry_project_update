@@ -19,7 +19,7 @@ def time_difference_now(time):
     return diff.days
 
 
-def sort_projects_by_update(projects):
+def sort_projects_by_update(projects, time):
     """ sort a list of project objects into 2 lists based on update """
 
     need_update = []
@@ -27,7 +27,7 @@ def sort_projects_by_update(projects):
 
     for project in projects:
         since_update = time_difference_now(project.updated_at)
-        if since_update > 14:
+        if since_update > time:
             need_update.append((project, since_update))
         else:
             update.append((project, since_update))
@@ -47,14 +47,15 @@ def check_username(user):
     #     flash("Login Failed")
 
 
-def post_project_db_update(project, notes, status, image, user):
+def post_project_db_update(project, notes, status, image, user, progress):
     """ update a project in the db and ravelry site """
 
     project.notes = notes
-    project.status_id = int(status)
+    project.progress = progress
+    if status:
+        project.status_id = int(status)
     project.updated_at = datetime.datetime.now()
     if image:
-        image = Image(url=photo, project_id=project.project_id)
-        db.session.add(image)
+        photo = Image(url=image, project_id=project.project_id)
+        db.session.add(photo)
     db.session.commit()
-    

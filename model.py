@@ -14,6 +14,8 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
     profile_img = db.Column(db.String(200))
+    password = db.Column(db.String(20), nullable=False)
+    update_time = db.Column(db.Integer)
 
     def __repr__(self):
         return "<User username= %s>" % (self.username)
@@ -30,6 +32,8 @@ class Project(db.Model):
     updated_at = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     notes = db.Column(db.Text)
+    progress = db.Column(db.Integer)
+    rav_page = db.Column(db.String(100))
     started_at = db.Column(db.DateTime)
     finished_at = db.Column(db.DateTime)
 
@@ -73,6 +77,7 @@ class Image(db.Model):
 def example_data():
     user = User(username="abc",
                 user_id=1,
+                password="123"
                 )
     db.session.add(user)
     project = Project(project_id=1,

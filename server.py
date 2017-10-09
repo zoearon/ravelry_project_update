@@ -98,8 +98,12 @@ def view_projects():
                Project.user_id == session['user'],
                Status.status == "In progress").order_by(Project.updated_at).all()
 
+    # get project update time
+    freq = db.session.query(User.update_time).filter(
+           User.user_id == session['user']).one()[0]
+
     # sort the in progress projects into 2 groups based on update needs
-    need_update, updated = tracker.sort_projects_by_update(wip_projects)
+    need_update, updated = tracker.sort_projects_by_update(wip_projects, freq)
 
     projects_by_type = {"finished": fin_projects,
                         "hibernate": hib_projects,
@@ -160,7 +164,8 @@ def view_projects():
                             updated=updated,
                             counts=counts,
                             dict=data_dict,
-                            wip=wip_dict)
+                            wip=wip_dict,
+                            freq=freq)
 
 
 @app.route('/projects/<projectid>', methods=['GET'])
@@ -168,10 +173,11 @@ def view_details(projectid):
     """ Show the project details and update form for a given project"""
 
     # get the project for that project id
-    project = Project.query.get(int(projectid))
+    project_images = Project.query.options(db.joinedload('images'), db.joinedload('status')).filter(
+                     Project.project_id == projectid).one()
 
-    # get the images associated with the project
-    images = Image.query.filter_by(project_id = projectid).all()
+    project = project_images
+    images = project.images
 
     # show the project details page
     return render_template('project_details.html',
@@ -185,6 +191,7 @@ def update_project(projectid):
     up_notes =request.form.get('notes')
     up_status = request.form.get('status')
     up_image = request.form.get('img-url')
+    up_progress = request.form.get('progress')
 
     # get the project for that project id
     project = Project.query.get(int(projectid))
@@ -193,7 +200,9 @@ def update_project(projectid):
     user = User.query.get(session['user'])
 
     # update the db
-    tracker.post_project_update(project, up_notes, up_status, up_image, user)
+    tracker.post_project_db_update(project, up_notes,
+                                   up_status, up_image,
+                                   user, up_progress)
 
     # update api/ ravelry project page
     api.post_project_api_update(project, up_notes, up_status, user)

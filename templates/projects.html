@@ -60,7 +60,7 @@
     {% endfor %}
 </div>
 <script>
-    var mess = "{{counts['need update']}}projects haven't been updated in 2 weeks!";
+    var mess = "{{counts['need update']}} projects haven't been updated in {{freq}} days!";
     alert(mess);
 </script>
 <script src="https://code.jquery.com/jquery.js"></script>
@@ -101,6 +101,7 @@
                                             options: options
                                           });
     $('#projectLegend').html(myDonutChart.generateLegend());
+    $('#project-chart').hide()
 
     var stackedBar = new Chart(ctx_donut2, {
         type: 'horizontalBar',

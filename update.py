@@ -1,108 +1,108 @@
-from model import connect_to_db, db, User, Project, Status, Image
-import datetime
-import requests
-import os
+# from model import connect_to_db, db, User, Project, Status, Image
+# import datetime
+# import requests
+# import os
 
-def update_projects(user):
-    """Load projects for a user from Ravelry api into database"""
+# def update_projects(user):
+#     """Load projects for a user from Ravelry api into database"""
 
-    # change to only get wips
-    projects_json = requests.get('https://api.ravelry.com/projects/' + user +
-                                '/list.json',
-                                auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                                os.environ['RAVELRY_PERSONAL_KEY'])).json()
+#     # change to only get wips
+#     projects_json = requests.get('https://api.ravelry.com/projects/' + user +
+#                                 '/list.json',
+#                                 auth=(os.environ['RAVELRY_ACCESS_KEY'],
+#                                 os.environ['RAVELRY_PERSONAL_KEY'])).json()
 
-    projects = projects_json['projects']
+#     projects = projects_json['projects']
 
-    for project in projects:
-        project_id = project['id']
-        user_id = project['user_id']
-        name = project['name']
-        pattern_name = project['pattern_name']
-        status_id = project['project_status_id']
-        updated_at = project['updated_at']
-        started_at = project['started']
-        finished_at = project['completed']
-        photos_count = project['photos_count']
+#     for project in projects:
+#         project_id = project['id']
+#         user_id = project['user_id']
+#         name = project['name']
+#         pattern_name = project['pattern_name']
+#         status_id = project['project_status_id']
+#         updated_at = project['updated_at']
+#         started_at = project['started']
+#         finished_at = project['completed']
+#         photos_count = project['photos_count']
 
-        # get the full project details from ravelry
-        details = requests.get('https://api.ravelry.com/projects/%s/%s.json' % (
-                                user, project_id),
-                                auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                                os.environ['RAVELRY_PERSONAL_KEY'])).json()
+#         # get the full project details from ravelry
+#         details = requests.get('https://api.ravelry.com/projects/%s/%s.json' % (
+#                                 user, project_id),
+#                                 auth=(os.environ['RAVELRY_ACCESS_KEY'],
+#                                 os.environ['RAVELRY_PERSONAL_KEY'])).json()
 
-        project_details = details['project']
-        # get the project notes
-        notes = project_details['notes']
+#         project_details = details['project']
+#         # get the project notes
+#         notes = project_details['notes']
 
-        # get images
-        photos = project_details['photos']
+#         # get images
+#         photos = project_details['photos']
 
-        for photo in photos:
-            url = photo['square_url']
+#         for photo in photos:
+#             url = photo['square_url']
 
-            image = Image(url=url, project_id=project_id)
-            db.session.add(image)
+#             image = Image(url=url, project_id=project_id)
+#             db.session.add(image)
 
-        # create a project instance
-        project = Project(project_id=project_id,
-                          name=name,
-                          pattern_name=pattern_name,
-                          status_id=status_id,
-                          updated_at=updated_at,
-                          user_id=user_id,
-                          notes=notes,
-                          started_at=started_at,
-                          finished_at=finished_at)
+#         # create a project instance
+#         project = Project(project_id=project_id,
+#                           name=name,
+#                           pattern_name=pattern_name,
+#                           status_id=status_id,
+#                           updated_at=updated_at,
+#                           user_id=user_id,
+#                           notes=notes,
+#                           started_at=started_at,
+#                           finished_at=finished_at)
 
-# possible eager load
-        current_project = Project.query.get(project_id)
+# # possible eager load
+#         current_project = Project.query.get(project_id)
 
-        current_dict = current_project.__dict__
-        del current_dict['_sa_instance_state']
+#         current_dict = current_project.__dict__
+#         del current_dict['_sa_instance_state']
 
         
-        if current_dict:
-            if current_project = project:
-                pass
-            else:
-                for key in         
+#         if current_dict:
+#             if current_project = project:
+#                 pass
+#             else:
+#                 for key in         
 
-        else:
-            # add the project to the database
-            db.session.add(project)
+#         else:
+#             # add the project to the database
+#             db.session.add(project)
 
-    db.session.commit()
+#     db.session.commit()
 
-################################################################################
+# ################################################################################
 
-update_projects(last_update):
-projects_by_update = requests.get("https://api.ravelry.com/projects/search." +
-                                  "json?status=in-progress&sort=updated&by=" +
-                                   user + "&page=1&page_size=5",
-                                   auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                                         os.environ['RAVELRY_PERSONAL_KEY']))
+# update_projects(last_update):
+# projects_by_update = requests.get("https://api.ravelry.com/projects/search." +
+#                                   "json?status=in-progress&sort=updated&by=" +
+#                                    user + "&page=1&page_size=5",
+#                                    auth=(os.environ['RAVELRY_ACCESS_KEY'],
+#                                          os.environ['RAVELRY_PERSONAL_KEY']))
 
-updated = projects_by_update.json()['projects']
-
-
-for project in updated:
-    #check if the API page has been updated since the last database update
-    if (project['updated_at'] < last_update): 
-        pass
-    else:
-        # update with current website data
+# updated = projects_by_update.json()['projects']
 
 
-last_update = NOW
+# for project in updated:
+#     #check if the API page has been updated since the last database update
+#     if (project['updated_at'] < last_update): 
+#         pass
+#     else:
+#         # update with current website data
 
 
+# last_update = NOW
 
 
 
-if __name__ == "__main__":
-    from flask import Flask
 
-    app = Flask(__name__)
 
-    connect_to_db(app)
+# if __name__ == "__main__":
+#     from flask import Flask
+
+#     app = Flask(__name__)
+
+#     connect_to_db(app)
