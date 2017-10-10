@@ -11,7 +11,7 @@ def send_message():
     print "git commit"
 
 
-def send_text(recipient=os.environ['MY_PHONE'], text):
+def send_text(text, recipient = os.environ['MY_PHONE']):
 
 
     # Your Account SID from twilio.com/console
@@ -33,7 +33,7 @@ def message():
 
     now = datetime.datetime.now()
 
-    users = db.session.query(User.user_id, User.update_date, User.phone_num).filter(User.subscribed).all()
+    users = db.session.query(User.user_id, User.update_time, User.phone_num).filter(User.subscribed).all()
     
     for user in users:
         user_id, freqency, phone = user
@@ -45,7 +45,7 @@ def message():
 
         print body
         
-        send_text(phone, body)
+        send_text(body, phone)
 
 
 def format_message(count, freqency):

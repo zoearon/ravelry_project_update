@@ -16,7 +16,7 @@ class User(db.Model):
     profile_img = db.Column(db.String(200))
     password = db.Column(db.String(20), nullable=False)
     update_time = db.Column(db.Integer)
-    phone_num = db.Column(db.Integer)
+    phone_num = db.Column(db.String(15))
     email = db.Column(db.String(100))
     subscribed = db.Column(db.Boolean, nullable=False)
 
