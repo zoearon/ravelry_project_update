@@ -16,6 +16,9 @@ class User(db.Model):
     profile_img = db.Column(db.String(200))
     password = db.Column(db.String(20), nullable=False)
     update_time = db.Column(db.Integer)
+    phone_num = db.Column(db.Integer)
+    email = db.Column(db.String(100))
+    subscribed = db.Column(db.Boolean, nullable=False)
 
     def __repr__(self):
         return "<User username= %s>" % (self.username)

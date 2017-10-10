@@ -11,7 +11,7 @@ def send_message():
     print "git commit"
 
 
-def send_text():
+def send_text(recipient=os.environ['MY_PHONE'], text):
 
 
     # Your Account SID from twilio.com/console
@@ -22,9 +22,9 @@ def send_text():
     client = Client(account_sid, auth_token)
 
     message = client.messages.create(
-        to=os.environ['MY_PHONE'], 
+        to=recipient, 
         from_=os.environ['TWILIO_NUM'],
-        body="Hello from Python!")
+        body=text)
 
     print(message.sid)
 
@@ -32,18 +32,31 @@ def message():
     """ Create mesage from database info """
 
     now = datetime.datetime.now()
-    update_freqs = db.session.query(User.update_time, Project).join(
-                                   Project).filter(Project.status_id == 1,
-                                                   Project.updated_at < (
-                                                    now - datetime.timedelta(days=14))).all()
 
-    freq = update_freqs[0][0]
-    count = len(update_freqs)
-    mess = "%s projects haven't been updated in %s days!" % (count, freq)
+    users = db.session.query(User.user_id, User.update_date, User.phone_num).filter(User.subscribed).all()
+    
+    for user in users:
+        user_id, freqency, phone = user
+        update_count = db.session.query(Project).filter(Project.status_id == 1,
+                                                        Project.user_id == user_id,
+                                                       Project.updated_at < (
+                                                        now - datetime.timedelta(days=freqency))).count()
+        body = format_message(update_count, freqency)
 
-    print mess
+        print body
+        
+        send_text(phone, body)
+
+
+def format_message(count, freqency):
+    """ write the text for each user who is subsribed """
+
+    text = "%s projects haven't been updated in %s days!" % (count, freqency)
+    return text
+
+
 # schedule.every().day.at("10:30").do(send_message)
-schedule.every(15).minutes.do(send_text)
+# schedule.every(15).minutes.do(send_text)
 
 if __name__ == "__main__":
     # while True:
