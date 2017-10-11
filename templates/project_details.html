@@ -35,10 +35,11 @@
             <option value="4">Frogged/ Deleted</option>
         </select><br>
         <div id="slidecontainer">
+          Progress: 
           <input type="range" min="1" max="100" value="{{project.progress|safe}}" class="slider" id="myRange" name="progress">
           <span id="loacation"></span>
         </div>
-        <input type="hidden" name="finished_at"><br>
+        <span id="finished" hidden>Finished: <input type="date" name="finished_at"><br> </span>
         Photo URL:<input type="url" name="img-url"><br>
         <input type="submit"><input type="reset">
     </form>
@@ -61,5 +62,21 @@
     slider.oninput = function() {
         output.innerHTML = this.value;
     }
+
+    if($('#updateproject select').val() == 2) {
+        $('#finished').show();
+    };
+    $('#updateproject select').change( function(evt){
+        var currentStatus = $('#updateproject select').val();
+        if (currentStatus == 2) {
+           var message = "Congartulations for finishing a Project! Be sure to set the finished date!";
+           alert(message);
+           $('#finished').show(); 
+       }
+       else {
+       $('#finished').hide();
+        }
+    });
+
 </script>
 {% endblock %}

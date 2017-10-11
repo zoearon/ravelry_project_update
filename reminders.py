@@ -55,10 +55,6 @@ def format_message(count, freqency):
     text = "%s projects haven't been updated in %s days!" % (count, freqency)
     return text
 
-# connect_to_db(app)
-# message()
-
-
 # schedule.every().day.at("10:30").do(send_message)
 schedule.every(1).minutes.do(message)
 
@@ -68,7 +64,4 @@ if __name__ == "__main__":
     schedule.run_all()
     while True:
         schedule.run_pending()
-#     #     time.sleep(1)
-
-#     connect_to_db(app)
-#     message()
+        time.sleep(1)
