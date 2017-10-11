@@ -69,12 +69,16 @@
     $('#updateproject select').change( function(evt){
         var currentStatus = $('#updateproject select').val();
         if (currentStatus == 2) {
-           var message = "Congartulations for finishing a Project! Be sure to set the finished date!";
-           alert(message);
+           var message = "Congratulations for finishing a project! Be sure to set the finished date!";
+           $('#flash').show();
+           $('#flash').append(message);
+           $('#flash').fadeOut(3000);
+
            $('#finished').show(); 
        }
        else {
        $('#finished').hide();
+       $("#flash").html("");
         }
     });
 
