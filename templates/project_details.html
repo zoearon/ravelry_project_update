@@ -7,7 +7,7 @@
 </div>
 <div class=project>
     Project Name: {{project.name}}<br>
-    <a href="https://www.ravelry.com/projects/{{username}}/{{project.rav_page}}">Ravelry Page</a>
+    <a href="https://www.ravelry.com/projects/{{username}}/{{project.rav_page}}">Ravelry Page</a><br>
     Pattern: {{project.pattern_name}}<br>
     Last Updated: {{project.updated_at}}<br>
     Status: {{project.status.status if project.status else " "}}<br>
@@ -25,8 +25,8 @@
         <img src="{{img.url}}">
     {% endfor %}
 <div class=update>
-    <h3> Update Project </h3>
-    <form action="/projects/{{project.project_id}}" method="POST" id="updateproject">
+    <button> <h3>Update Project </h3></button>
+    <form action="/projects/{{project.project_id}}" method="POST" id="updateproject" hidden>
         Notes: <textarea name="notes" form="updateproject">{{project.notes}}</textarea><br>
         Status: <select name="status">
             <option value="1">In progress</option>
@@ -35,9 +35,8 @@
             <option value="4">Frogged/ Deleted</option>
         </select><br>
         <div id="slidecontainer">
-          Progress: 
+          Progress: <span id="loacation"></span> % <br>
           <input type="range" min="1" max="100" value="{{project.progress|safe}}" class="slider" id="myRange" name="progress">
-          <span id="loacation"></span>
         </div>
         <span id="finished" hidden>Finished: <input type="date" name="finished_at"><br> </span>
         Photo URL:<input type="url" name="img-url"><br>
@@ -71,15 +70,19 @@
         if (currentStatus == 2) {
            var message = "Congratulations for finishing a project! Be sure to set the finished date!";
            $('#flash').show();
-           $('#flash').append(message);
+           $('#flash h3').html(message);
            $('#flash').fadeOut(3000);
 
            $('#finished').show(); 
        }
        else {
        $('#finished').hide();
-       $("#flash").html("");
+       $("#flash h3").empty();
         }
+    });
+
+    $('.update button').on('click', function() {
+        $('#updateproject').toggle();
     });
 
 </script>

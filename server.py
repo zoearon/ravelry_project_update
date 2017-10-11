@@ -38,6 +38,20 @@ def view_profile():
 
     return render_template("user.html", user=user)
 
+@app.route('/user/update', methods=["POST"])
+def update():
+    
+    # Update the database
+    user = User.query.get(int(session['user']))
+
+    user.phone_num = str(request.form.get('phone'))
+    user.update_time = int(request.form.get('frequency'))
+    user.subscribed = bool(request.form.get('subscribed'))
+    
+    db.session.commit()
+
+    return "User Successfuly Updated!"
+
 @app.route('/logout')
 def logout():
     """ log out user from the session """
@@ -60,23 +74,19 @@ def check_user():
 
     # get the user name from the post form
     user = request.form.get("username")
+    password = request.form.get("password")
 
-    # query for any users with that username
-    active_user = User.query.filter_by(username = user).first()
+    route = tracker.check_login(user, password)
 
-    # if there is a matching user
-    if active_user:
-        flash( "Login Successful")
-        session['user'] = active_user.user_id
-        return redirect('/user')
-    # if there is not a user with that username
-    else:
-        flash("Login Failed")
-        return redirect('/login')    
+    return redirect(route)    
 
 @app.route('/projects')
 def view_projects():
     """ View the current users projects """
+
+    # check if there is a current user
+    if 'user' not in session:
+        return redirect("/login")
 
     # Get finished projects
     fin_projects = db.session.query(Project).join(Status).filter(

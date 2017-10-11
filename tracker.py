@@ -4,6 +4,25 @@ from model import db, User, Image
 import requests
 import os
 from PIL import Image as pilImage
+from flask import flash, session
+
+def check_login(user, password):
+    """ check if a users login credetials are correct """
+
+    # query for any users with that username
+    active_user = User.query.filter(User.username == user,
+                                    User.password == password).first()
+
+    # if there is a matching user
+    if active_user:
+        flash( "Login Successful")
+        session['user'] = active_user.user_id
+        return '/user'
+    # if there is not a user with that username and password combo
+    else:
+        flash("Login Failed")
+        return '/projects' 
+
 
 def time_difference_now(time):
     """ Find how much time has passed since a datetime in days"""

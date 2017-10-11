@@ -4,7 +4,45 @@
 
 {% block content %}
 <img src={{user.profile_img}}><br>
-Username: {{user.username}}
+Username: {{user.username}}<br>
+<a href="https://www.ravelry.com/people/{{user.username}}">Ravelry Page</a><br>
+Projects should be updated every {{user.update_time}} days.<br>
+<button class='update'>Update Profile </button>
+<div class='update' hidden>
+    <form method="POST" id='updateuser'>
+        Phone Number(4159999999): <input type='number' id='phone-field'name='phone' value={{user.phone_num}}><br>
+        Update Frequency(in days): <input type='number' id='frequency-field' name='frequency' value={{user.update_time}}><br>
+        Reminder Text <input type='checkbox' id='subscribe-field'name='subscribed' value='True' checked><br>
+        <input type="submit"><input type="reset">
+</div>
+<script src="https://code.jquery.com/jquery.js"></script>
+<script type="text/javascript">
+    $('button.update').on('click', function() {
+        $('.update').toggle();
+    });
 
+    function submitUserUpdate(evt) {
+        evt.preventDefault();
+
+        var phone = $("#phone-field").val();
+        var frequency = $("#frequency-field").val();
+        var subscribed = $("#subscribe-field").val();
+        var formInputs = {
+                "phone": phone,
+                "frequency": frequency,
+                "subscribed": subscribed,
+        };
+        if (phone.length == 10) {
+            $.post('/user/update', 
+                   formInputs,
+                   success);
+        }
+    }
+    function success(result) {
+        alert(result);
+    }
+
+    $('#updateuser').on('submit', submitUserUpdate);
+</script>
 
 {% endblock %}
