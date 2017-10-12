@@ -7,6 +7,28 @@ auth=(os.environ['RAVELRY_ACCESS_KEY'], os.environ['RAVELRY_PERSONAL_KEY'])
 access_key=os.environ['RAVELRY_ACCESS_KEY']
 api_url = "https://api.ravelry.com/"
 
+def projects(user, headers_input = {}):
+    """Load projects for a user from Ravelry api into database"""
+
+    projects_response = requests.get('https://api.ravelry.com/projects/' + user +
+                                '/list.json',
+                                auth=(os.environ['RAVELRY_ACCESS_KEY'],
+                                os.environ['RAVELRY_PERSONAL_KEY']),
+                                headers=headers_input)
+
+    return projects_response
+
+def project_details(user, project_id):
+    """ Get the details for a project from the api """
+
+    details = requests.get('https://api.ravelry.com/projects/%s/%s.json' % (
+                            user, project_id),
+                            auth=(os.environ['RAVELRY_ACCESS_KEY'],
+                            os.environ['RAVELRY_PERSONAL_KEY'])).json()
+
+    return details
+
+    
 def post_project_api_update(project,notes, status, user):
     """ Update the api project page """
 

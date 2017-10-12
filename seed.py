@@ -2,6 +2,7 @@ from model import connect_to_db, db, User, Project, Status, Image
 import datetime
 import requests
 import os
+import api
 
 def load_user():
     """ Add the current user to the database"""
@@ -66,18 +67,14 @@ def load_status():
     db.session.commit()
 
 etag = ""
-def load_projects(user):
+
+def load_projects(user, response):
     """Load projects for a user from Ravelry api into database"""
 
-    projects_response = requests.get('https://api.ravelry.com/projects/' + user +
-                                '/list.json',
-                                auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                                os.environ['RAVELRY_PERSONAL_KEY']))
+    projects = response.json()['projects']
+    etag = response.headers['ETag']
 
-    projects = projects_response.json()['projects']
-    etag = projects_response.headers['ETag']
-
-    Project.query.delete()
+    Project.query.join(User).filter(User.username == user).delete()
 
     for project in projects:
         project_id = project['id']
@@ -93,12 +90,9 @@ def load_projects(user):
         rav_page = project['permalink']
 
         # get the full project details from ravelry
-        details = requests.get('https://api.ravelry.com/projects/%s/%s.json' % (
-                                user, project_id),
-                                auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                                os.environ['RAVELRY_PERSONAL_KEY'])).json()
-
+        details = api.project_details(user, project_id)
         project_details = details['project']
+        
         # get the project notes
         notes = project_details['notes']
 
@@ -129,6 +123,17 @@ def load_projects(user):
 
     db.session.commit()
 
+def sync_projects(user):
+    """ Update the db with any changes from the api """
+
+    headers = {'If-None-Match': etag}
+
+    projects_response = api.projects(user, headers)
+
+    if projects_response.status = 304:
+        pass
+    elif projects_response.status = 200:
+        load_projects(user, projects_response)
 
 
 if __name__ == "__main__":
@@ -143,4 +148,7 @@ if __name__ == "__main__":
 
     load_user()
     load_status()
+    projects_response = api.projects('zo1414')
     load_projects('zo1414')
+
+
