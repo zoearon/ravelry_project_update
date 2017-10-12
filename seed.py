@@ -77,51 +77,69 @@ def load_projects(user, response):
     Project.query.join(User).filter(User.username == user).delete()
 
     for project in projects:
-        project_id = project['id']
-        user_id = project['user_id']
-        name = project['name']
-        pattern_name = project['pattern_name']
-        status_id = project['project_status_id']
-        updated_at = project['updated_at']
-        started_at = project['started']
-        finished_at = project['completed']
-        photos_count = project['photos_count']
-        progress = project['progress']
-        rav_page = project['permalink']
-
-        # get the full project details from ravelry
-        details = api.project_details(user, project_id)
-        project_details = details['project']
-        
-        # get the project notes
-        notes = project_details['notes']
-
-        # get images
-        photos = project_details['photos']
-
-        for photo in photos:
-            url = photo['medium2_url']
-
-            image = Image(url=url, project_id=project_id)
-            db.session.add(image)
-
-        # create a project instance
-        project = Project(project_id=project_id,
-                          name=name,
-                          pattern_name=pattern_name,
-                          status_id=status_id,
-                          updated_at=updated_at,
-                          user_id=user_id,
-                          notes=notes,
-                          started_at=started_at,
-                          finished_at=finished_at,
-                          progress=progress,
-                          rav_page=rav_page)
-
-        # add the project to the database
-        db.session.add(project)
+        add_project(project)
 
     db.session.commit()
+
+def add_project(project):
+    """ Add a project to the db from an api generated json dictionary """
+
+    project_id = project['id']
+    user_id = project['user_id']
+    name = project['name']
+    pattern_name = project['pattern_name']
+    status_id = project['project_status_id']
+    updated_at = project['updated_at']
+    started_at = project['started']
+    finished_at = project['completed']
+    photos_count = project['photos_count']
+    progress = project['progress']
+    rav_page = project['permalink']
+
+    # get the full project details from ravelry
+    details, p_etag = api.project_details(user, project_id)
+    project_details = details['project']
+
+    
+    user_id = project['user_id']
+    name = project['name']
+    pattern_name = project['pattern_name']
+    status_id = project['project_status_id']
+    updated_at = project['updated_at']
+    started_at = project['started']
+    finished_at = project['completed']
+    photos_count = project['photos_count']
+    progress = project['progress']
+    rav_page = project['permalink']
+
+    # get the project notes
+    notes = project_details['notes']
+
+    # get images
+    photos = project_details['photos']
+
+    for photo in photos:
+        url = photo['medium2_url']
+
+        image = Image(url=url, project_id=project_id)
+        db.session.add(image)
+
+    # create a project instance
+    project = Project(project_id=project_id,
+                      name=name,
+                      pattern_name=pattern_name,
+                      status_id=status_id,
+                      updated_at=updated_at,
+                      user_id=user_id,
+                      notes=notes,
+                      started_at=started_at,
+                      finished_at=finished_at,
+                      progress=progress,
+                      rav_page=rav_page,
+                      etag=p_etag)
+
+    # add the project to the database
+    db.session.add(project)
 
 def sync_projects(user):
     """ Update the db with any changes from the api """
@@ -130,11 +148,26 @@ def sync_projects(user):
 
     projects_response = api.projects(user, headers)
 
-    if projects_response.status = 304:
+    if projects_response.status_code == 304:
         pass
-    elif projects_response.status = 200:
-        load_projects(user, projects_response)
+    elif projects_response.status_code == 200:
+        etag = projects_response.headers['ETag']
+        projects = projects_response.json()['projects']
 
+        current = db.session.query(Project.project_id,
+                                            Project).join(User).filter(
+                                            User.username == user).all()
+        current_projects = dict(current)
+        for project in projects:
+            project_id = project['id']
+            if project_id in current_projects.keys():
+                # update existing projects
+                pass
+            else:
+                add_project(project)
+    
+    else:
+        return "API Error"
 
 if __name__ == "__main__":
     from flask import Flask
@@ -144,11 +177,12 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # In case tables haven't been created, create them
-    db.create_all()
+    # db.create_all()
 
-    load_user()
-    load_status()
-    projects_response = api.projects('zo1414')
-    load_projects('zo1414')
+    # load_user()
+    # load_status()
+    # projects_response = api.projects('zo1414')
+    # load_projects('zo1414')
+    sync_projects('zo1414')
 
 

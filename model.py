@@ -39,6 +39,7 @@ class Project(db.Model):
     rav_page = db.Column(db.String(100))
     started_at = db.Column(db.DateTime)
     finished_at = db.Column(db.DateTime)
+    etag = db.Column(db.String(100))
 
     # relationship between tables
     user = db.relationship("User", backref= 'projects')

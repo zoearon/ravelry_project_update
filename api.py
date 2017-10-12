@@ -24,11 +24,12 @@ def project_details(user, project_id):
     details = requests.get('https://api.ravelry.com/projects/%s/%s.json' % (
                             user, project_id),
                             auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                            os.environ['RAVELRY_PERSONAL_KEY'])).json()
+                            os.environ['RAVELRY_PERSONAL_KEY']))
+    tag = details.headers['ETag']
 
-    return details
+    return details.json(), tag
 
-    
+
 def post_project_api_update(project,notes, status, user):
     """ Update the api project page """
 
