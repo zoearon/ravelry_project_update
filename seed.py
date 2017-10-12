@@ -65,15 +65,17 @@ def load_status():
 
     db.session.commit()
 
+etag = ""
 def load_projects(user):
     """Load projects for a user from Ravelry api into database"""
 
-    projects_json = requests.get('https://api.ravelry.com/projects/' + user +
+    projects_response = requests.get('https://api.ravelry.com/projects/' + user +
                                 '/list.json',
                                 auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                                os.environ['RAVELRY_PERSONAL_KEY'])).json()
+                                os.environ['RAVELRY_PERSONAL_KEY']))
 
-    projects = projects_json['projects']
+    projects = projects_response.json()['projects']
+    etag = projects_response.headers['ETag']
 
     Project.query.delete()
 
