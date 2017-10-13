@@ -66,35 +66,27 @@ def load_status():
 
     db.session.commit()
 
-etag = ""
 
 def load_projects(user, response):
     """Load projects for a user from Ravelry api into database"""
 
     projects = response.json()['projects']
-    etag = response.headers['ETag']
+    
+    user_ob = User.query.filter_by(username=user).one()
+    user_ob.api_tag = response.headers['ETag']
 
-    Project.query.join(User).filter(User.username == user).delete()
+    Project.query.filter(Project.user_id == user_ob.user_id).delete()
 
     for project in projects:
-        add_project(project)
+        add_project(user, project)
 
     db.session.commit()
 
-def add_project(project):
+
+def add_project(user, project):
     """ Add a project to the db from an api generated json dictionary """
 
     project_id = project['id']
-    user_id = project['user_id']
-    name = project['name']
-    pattern_name = project['pattern_name']
-    status_id = project['project_status_id']
-    updated_at = project['updated_at']
-    started_at = project['started']
-    finished_at = project['completed']
-    photos_count = project['photos_count']
-    progress = project['progress']
-    rav_page = project['permalink']
 
     # get the full project details from ravelry
     details, p_etag = api.project_details(user, project_id)
@@ -135,39 +127,76 @@ def add_project(project):
                       started_at=started_at,
                       finished_at=finished_at,
                       progress=progress,
-                      rav_page=rav_page,
-                      etag=p_etag)
+                      rav_page=rav_page)
+                      # etag=p_etag)
 
     # add the project to the database
     db.session.add(project)
 
+
 def sync_projects(user):
     """ Update the db with any changes from the api """
 
+    user_ob = User.query.filter_by(username = user).first()
+    etag = str(user_ob.api_etag)
     headers = {'If-None-Match': etag}
+    print headers
 
     projects_response = api.projects(user, headers)
 
+    print projects_response.status_code
+
     if projects_response.status_code == 304:
-        pass
+        
+        print "No API updates"
+
+    # if there are updates from the api
     elif projects_response.status_code == 200:
-        etag = projects_response.headers['ETag']
+        
+        # update the users api_etag to the new tag
+        new_etag = projects_response.headers['ETag']
+        print new_etag
+
+        user_ob.api_etag = new_etag
+
+        # get the projects dictionary list from the response
         projects = projects_response.json()['projects']
 
+        # get the current projects for the user
         current = db.session.query(Project.project_id,
                                             Project).join(User).filter(
                                             User.username == user).all()
+        
+        # create a dict where keys are project id and value is project object
         current_projects = dict(current)
+        
         for project in projects:
             project_id = project['id']
+
+            # check if project is already in db
             if project_id in current_projects.keys():
-                # update existing projects
-                pass
+                updated_at_str = project['updated_at'][:-6]
+                updated_at_dt = datetime.datetime.strptime(updated_at_str, '%Y/%m/%d %X')
+
+                # check if project has been updated on ravelry
+                if updated_at_dt != current_projects[project_id].updated_at:
+                    current_project = current_projects[project_id]
+                    db.session.delete(current_project)
+                    db.session.commit()
+
+                    add_project(user, project)
+
+            # if project is not in the database add it
             else:
-                add_project(project)
-    
+                add_project(user, project)
+        
+        db.session.commit()
+
+        print "database updated"
+
     else:
         return "API Error"
+
 
 if __name__ == "__main__":
     from flask import Flask
@@ -182,7 +211,7 @@ if __name__ == "__main__":
     # load_user()
     # load_status()
     # projects_response = api.projects('zo1414')
-    # load_projects('zo1414')
+    # load_projects('zo1414', projects_response)
     sync_projects('zo1414')
 
 
