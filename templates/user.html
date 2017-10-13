@@ -44,7 +44,15 @@ Projects should be updated every {{user.update_time}} days.<br>
     }
 
     $('#updateuser').on('submit', submitUserUpdate);
-    $('#')
+
+    $('#sync').on('click', function() {
+        var user = {"user": '{{user.username|safe}}' };
+        $.get('/sync', user, function(data) {
+            alert(data);
+        });
+    });
+
+
 </script>
 
 {% endblock %}

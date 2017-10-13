@@ -148,7 +148,7 @@ def sync_projects(user):
 
     if projects_response.status_code == 304:
         
-        print "No API updates"
+        return "No API updates"
 
     # if there are updates from the api
     elif projects_response.status_code == 200:
@@ -192,7 +192,7 @@ def sync_projects(user):
         
         db.session.commit()
 
-        print "database updated"
+        return "database updated"
 
     else:
         return "API Error"

@@ -9,6 +9,7 @@ import tracker
 import api
 import requests
 import os
+from seed import sync_projects
 
 app = Flask(__name__)
 
@@ -229,6 +230,14 @@ def update_project(projectid):
     # go to the project page
     return redirect("/projects/%s" % (projectid))
 
+
+@app.route('/sync')
+def sync():
+
+    user = request.args.get('user')
+    print user
+
+    return sync_projects(user)
 
 if __name__ == "__main__":
     # set up debug toolbar
