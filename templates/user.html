@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block title %}{{user.username}}'s Profile{% endblock %}
-
+{% block head %}<script src="https://code.jquery.com/jquery.js"></script>{% endblock %}
 {% block content %}
 <img src={{user.profile_img}}><br>
-Username: {{user.username}}<br>
+Username: <span id='username'>{{user.username}}</span><br>
 <a href="https://www.ravelry.com/people/{{user.username}}">Ravelry Page</a><br>
 Projects should be updated every {{user.update_time}} days.<br>
 <button id='sync'>Sync with Ravelry Page</button>
@@ -16,7 +16,10 @@ Projects should be updated every {{user.update_time}} days.<br>
         Reminder Text <input type='checkbox' id='subscribe-field'name='subscribed' value='True' checked><br>
         <input type="submit"><input type="reset">
 </div>
-<script src="https://code.jquery.com/jquery.js"></script>
 <script src="/static/user.js"></script>
+<script>
+    var username = $("#username").html();
+    $('#sync').on('click', function() {syncProjects(username);});
+</script>
 
 {% endblock %}
