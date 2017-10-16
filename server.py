@@ -1,6 +1,6 @@
 from jinja2 import StrictUndefined
 
-from flask import Flask, jsonify,render_template, redirect, request, flash, session
+from flask import Flask, jsonify,render_template, redirect, request, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Project, Status, Image
@@ -13,11 +13,17 @@ from seed import sync_projects
 
 app = Flask(__name__)
 
+JS_TESTING_MODE = False
+
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "secret"
 
 # Raise error if undefine Jinja variable
 app.jinja_env.undefined = StrictUndefined
+
+@app.before_request
+def add_tests():
+    g.jasmine_tests = JS_TESTING_MODE
 
 @app.route('/')
 def homepage():
@@ -240,6 +246,10 @@ def sync():
     return sync_projects(user)
 
 if __name__ == "__main__":
+    import sys
+    if sys.argv[-1] == "jstest":
+        JS_TESTING_MODE = True
+
     # set up debug toolbar
     app.debug = True
     app.jinja_env.auto_reload = app.debug

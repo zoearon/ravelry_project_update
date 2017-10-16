@@ -17,42 +17,6 @@ Projects should be updated every {{user.update_time}} days.<br>
         <input type="submit"><input type="reset">
 </div>
 <script src="https://code.jquery.com/jquery.js"></script>
-<script type="text/javascript">
-    $('button.update').on('click', function() {
-        $('.update').toggle();
-    });
-
-    function submitUserUpdate(evt) {
-        evt.preventDefault();
-
-        var phone = $("#phone-field").val();
-        var frequency = $("#frequency-field").val();
-        var subscribed = $("#subscribe-field").val();
-        var formInputs = {
-                "phone": phone,
-                "frequency": frequency,
-                "subscribed": subscribed,
-        };
-        if (phone.length == 10) {
-            $.post('/user/update', 
-                   formInputs,
-                   success);
-        }
-    }
-    function success(result) {
-        alert(result);
-    }
-
-    $('#updateuser').on('submit', submitUserUpdate);
-
-    $('#sync').on('click', function() {
-        var user = {"user": '{{user.username|safe}}' };
-        $.get('/sync', user, function(data) {
-            alert(data);
-        });
-    });
-
-
-</script>
+<script src="/static/user.js"></script>
 
 {% endblock %}
