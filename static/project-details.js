@@ -1,9 +1,4 @@
-// set the status intially to the current status
-$("#updateproject select option").each( function() {
-    if ($(this).val() == {{project.status_id|tojson}}) {
-        $(this).attr('selected', true);
-    } 
-});
+
 
 var slider = document.getElementById("myRange");
 var output = document.getElementById("loacation");
@@ -14,9 +9,6 @@ slider.oninput = function() {
     output.innerHTML = this.value;
 }
 
-if($('#updateproject select').val() == 2) {
-    $('#finished').show();
-};
 $('#updateproject select').change( function(evt){
     var currentStatus = $('#updateproject select').val();
     if (currentStatus == 2) {
@@ -36,3 +28,7 @@ $('#updateproject select').change( function(evt){
 $('.update button').on('click', function() {
     $('#updateproject').toggle();
 });
+
+if($('#updateproject select').val() == 2) {
+    $('#finished').show();
+};

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}{{project.name}}{% endblock %}
-
+{% block head %}<script src="https://code.jquery.com/jquery.js"></script>{% endblock %}
 {% block content %}
 <div class=userinfo>
 </div>
@@ -44,6 +44,14 @@
     </form>
 
 </div>
-<script src="https://code.jquery.com/jquery.js"></script>
+
+<script type="text/javascript">
+  $("#updateproject select option").each( function() {
+      if ($(this).val() == {{project.status_id|tojson}}) {
+          $(this).attr('selected', true);
+      } 
+  });
+</script>
+
 <script src="/static/project-details.js"></script>
 {% endblock %}
