@@ -30,10 +30,12 @@ def project_details(user, project_id):
     return details.json(), tag
 
 
-def post_project_api_update(project,notes, status, user):
+def post_project_api_update(project,notes, status, progress, user):
     """ Update the api project page """
 
-    data = {"notes": notes, "project_status_id": status}
+    data = {"notes": notes,
+            "project_status_id": status,
+            "progress": progress}
 
     response = requests.post("https://api.ravelry.com/projects/%s/%s.json" %
                               (user.username, project.project_id),
@@ -41,9 +43,11 @@ def post_project_api_update(project,notes, status, user):
                               auth=auth)
 
 
-def post_add_image(project, user, photo):
+def post_add_image(project, user, photo=None):
     """ add an image to the api project page """
 
+    if not photo:
+        return "no photos"
     # change the image to a png for the api
     response_image = requests.get(photo, stream=True)
     photo = pilImage.open(response_image.raw)

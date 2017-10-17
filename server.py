@@ -226,9 +226,8 @@ def update_project(projectid):
                                    user, up_progress)
 
     # update api/ ravelry project page
-    api.post_project_api_update(project, up_notes, up_status, user)
-    if up_image:
-        api.post_add_image(project, user, up_image)
+    api.post_project_api_update(project, up_notes, up_status, up_progress, user)
+    api.post_add_image(project, user, up_image)
 
     # flash message about update
     flash("Update Successful")
