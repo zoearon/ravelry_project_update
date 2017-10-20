@@ -1,6 +1,6 @@
 from jinja2 import StrictUndefined
 
-from flask import Flask, jsonify,render_template, redirect, request, flash, session, g
+from flask import Flask, jsonify, render_template, redirect, request, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, Project, Status, Image
@@ -21,9 +21,11 @@ app.secret_key = "secret"
 # Raise error if undefine Jinja variable
 app.jinja_env.undefined = StrictUndefined
 
+
 @app.before_request
 def add_tests():
     g.jasmine_tests = JS_TESTING_MODE
+
 
 @app.route('/')
 def homepage():
@@ -31,6 +33,7 @@ def homepage():
 
     # session['user'] = 463097
     return render_template("homepage.html")
+
 
 @app.route('/user')
 def view_profile():
@@ -45,19 +48,21 @@ def view_profile():
 
     return render_template("user.html", user=user)
 
+
 @app.route('/user/update', methods=["POST"])
 def update():
-    
+
     # Update the database
     user = User.query.get(int(session['user']))
 
     user.phone_num = str(request.form.get('phone'))
     user.update_time = int(request.form.get('frequency'))
     user.subscribed = bool(request.form.get('subscribed'))
-    
+
     db.session.commit()
 
     return "User Successfuly Updated!"
+
 
 @app.route('/logout')
 def logout():
@@ -69,11 +74,13 @@ def logout():
     # redirect back to login
     return redirect('/login')
 
+
 @app.route('/login', methods=['GET'])
 def login():
     """ show the login form """
 
     return render_template("login.html")
+
 
 @app.route('/login', methods=['POST'])
 def check_user():
@@ -85,7 +92,8 @@ def check_user():
 
     route = tracker.check_login(user, password)
 
-    return redirect(route)    
+    return redirect(route)
+
 
 @app.route('/projects')
 def view_projects():
@@ -97,27 +105,27 @@ def view_projects():
 
     # Get finished projects
     fin_projects = db.session.query(Project).join(Status).filter(
-               Project.user_id == session['user'],
-               Status.status == "Finished").all()
+        Project.user_id == session['user'],
+        Status.status == "Finished").all()
 
     # Get hibernating projects
     hib_projects = db.session.query(Project).join(Status).filter(
-               Project.user_id == session['user'],
-               Status.status == "Hibernating").all()
+        Project.user_id == session['user'],
+        Status.status == "Hibernating").all()
 
     # Get frogged projects
     frog_projects = db.session.query(Project).join(Status).filter(
-               Project.user_id == session['user'],
-               Status.status == "Frogged").all()
+        Project.user_id == session['user'],
+        Status.status == "Frogged").all()
 
     # Get the projects for the current user and are in progress
     wip_projects = db.session.query(Project).join(Status).filter(
-               Project.user_id == session['user'],
-               Status.status == "In progress").order_by(Project.updated_at).all()
+        Project.user_id == session['user'],
+        Status.status == "In progress").order_by(Project.updated_at).all()
 
     # get project update time
     freq = db.session.query(User.update_time).filter(
-           User.user_id == session['user']).one()[0]
+        User.user_id == session['user']).one()[0]
 
     # sort the in progress projects into 2 groups based on update needs
     need_update, updated = tracker.sort_projects_by_update(wip_projects, freq)
@@ -128,11 +136,11 @@ def view_projects():
                         "need update": need_update,
                         "updated": updated}
 
-    counts = {k: len(v) for k,v in projects_by_type.items()}
+    counts = {k: len(v) for k, v in projects_by_type.items()}
 
     data_dict = {
-                "labels": [k for k in sorted(counts.keys())],
-                "datasets": [
+                    "labels": [k for k in sorted(counts.keys())],
+                    "datasets": [
                     {
                         "data": [v for k, v in sorted(counts.items())],
                         "backgroundColor": [
@@ -147,7 +155,7 @@ def view_projects():
                             "#36A2EB",
                         ]
                     }]
-            }
+                }
 
     wip_dict = {
                 "labels": ["WIP"],
@@ -171,18 +179,18 @@ def view_projects():
                         "hoverBackgroundColor": [
                             "green"
                         ]
-                    }] }
+                    }]}
 
     return render_template("projects.html",
-                            finished=fin_projects,
-                            hibernate=hib_projects,
-                            frogged=frog_projects,
-                            needUpdate= need_update,
-                            updated=updated,
-                            counts=counts,
-                            dict=data_dict,
-                            wip=wip_dict,
-                            freq=freq)
+                           finished=fin_projects,
+                           hibernate=hib_projects,
+                           frogged=frog_projects,
+                           needUpdate=need_update,
+                           updated=updated,
+                           counts=counts,
+                           dict=data_dict,
+                           wip=wip_dict,
+                           freq=freq)
 
 
 @app.route('/projects/<projectid>', methods=['GET'])
@@ -191,7 +199,7 @@ def view_details(projectid):
 
     # get the project for that project id
     project_images = Project.query.options(db.joinedload('images'), db.joinedload('status')).filter(
-                     Project.project_id == projectid).one()
+        Project.project_id == projectid).one()
 
     project = project_images
     images = project.images
@@ -205,11 +213,12 @@ def view_details(projectid):
                            images=images,
                            username=username)
 
+
 @app.route('/projects/<projectid>', methods=['POST'])
 def update_project(projectid):
     """ Update the database with form inputs """
 
-    up_notes =request.form.get('notes')
+    up_notes = request.form.get('notes')
     up_status = request.form.get('status')
     up_image = request.form.get('img-url')
     up_progress = request.form.get('progress')
@@ -243,6 +252,7 @@ def sync():
     print user
 
     return sync_projects(user)
+
 
 @app.route('/projects-react')
 def react_page():
@@ -372,8 +382,8 @@ def project_list(status):
     session['user'] = 463097
     print status
     projects = db.session.query(Project.name, Project.project_id).join(Status).filter(
-               Project.user_id == session['user'],
-               Status.status == status).all()
+        Project.user_id == session['user'],
+        Status.status == status).all()
     print projects
     print jsonify(projects=projects)
     return jsonify(projects=projects)

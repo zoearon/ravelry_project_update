@@ -24,6 +24,7 @@ class User(db.Model):
     def __repr__(self):
         return "<User username= %s>" % (self.username)
 
+
 class Project(db.Model):
     """ A project created by a user """
 
@@ -43,14 +44,15 @@ class Project(db.Model):
     # etag = db.Column(db.String(100))
 
     # relationship between tables
-    user = db.relationship("User", backref= 'projects')
+    user = db.relationship("User", backref='projects')
     status = db.relationship("Status", backref='projects')
 
     def __repr__(self):
         return "< Project name= %s>" % (self.name)
 
+
 class Status(db.Model):
-    """ Assign a status_id a status name fixed 
+    """ Assign a status_id a status name fixed
 
     Assures status_id is valid"""
 
@@ -62,6 +64,7 @@ class Status(db.Model):
     def __repr__(self):
         return "<Status status= %s id= %s>" % (self.status, self.status_id)
 
+
 class Image(db.Model):
     """ An image for a a project. """
 
@@ -71,7 +74,7 @@ class Image(db.Model):
     url = db.Column(db.String(500), nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.project_id'))
 
-    project = db.relationship("Project", backref= 'images')
+    project = db.relationship("Project", backref='images')
 
     def __repr__(self):
         return "< Image id= %s>" % (self.img_id)
@@ -82,7 +85,8 @@ class Image(db.Model):
 def example_data():
     user = User(username="abc",
                 user_id=1,
-                password="123"
+                password="123",
+                subscribed=True
                 )
     db.session.add(user)
     project = Project(project_id=1,
