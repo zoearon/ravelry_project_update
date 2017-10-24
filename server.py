@@ -164,20 +164,20 @@ def view_projects():
                         "label": "Need Update",
                         "data": [counts['need update']],
                         "backgroundColor": [
-                            "red"
+                            "#FF6F59"
                         ],
                         "hoverBackgroundColor": [
-                            "red"
+                            "#FF6F59"
                         ]
                     },
                     {
                         "label": "Updated",
                         "data": [counts['updated']],
                         "backgroundColor": [
-                            "green"
+                            "#43AA8B"
                         ],
                         "hoverBackgroundColor": [
-                            "green"
+                            "#43AA8B"
                         ]
                     }]}
 

@@ -1,79 +1,88 @@
 {% extends 'base.html' %}
 
-{% block title %}{% endblock %}
-{% block head %}<script src="https://code.jquery.com/jquery.js"></script>
-<script src=
-  "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.js">
-</script>
+{% block title %}Projects{% endblock %}
+{% block head %}
+
+<script src="https://code.jquery.com/jquery.js"></script>
+
 {% endblock %}
 {% block content %}
-<div id="project-chart">
-  <canvas id="donutChart"></canvas>
-  <div id="projectLegend" class="chart-legend"></div>
-</div>
-<div id="update-chart">
-  <canvas id="donutChart2"></canvas>
-  <div id="updateLegend" class="chart-legend"></div>
-</div>
-<div class=need>
-    <button><h2> Need Updates </h2></button>
-    {% if needUpdate %}
-        {% for project, update in needUpdate %}
-            <div class=project>
-                <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
-                <p> Last update was {{update}} days ago. </p>
-                <br>
-            </div>
-        {% endfor %}
-    {% else %}
-        <h2> No projects need updates </h2>
-    {% endif %}
-</div>
-<div class=updated>
-    <button><h2> Recently Updated Projects </h2></button>
-    {% for project, update in updated %}
-        <div class=project>
-            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
-            <p> Last update was {{update}} days ago. </p>
-            <br>
+
+
+            <div id="project-chart">
+              <canvas id="donutChart"></canvas>
+              <div id="projectLegend" class="chart-legend"></div>
         </div>
-    {% endfor %}
-</div>
-<div class=finished>
-    <button><h2>Finished Projects</h2></button>
-    {% for project in finished %}
-        <div class=project>
-            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        <div id="update-chart" >
+          <canvas id="donutChart2"></canvas>
+          <div id="updateLegend" class="chart-legend"></div>
         </div>
-    {% endfor %}
-</div>
-<div class=hibernating>
-    <button><h2>Hibernating Projects</h2></button>
-    {% for project in hibernate %}
-        <div class=project>
-            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        <div class="col-xs-12">
+        <button class='need status'><h2> Need Updates </h2></button>
+        <button class='updated status'><h2> Recently Updated Projects </h2></button>
+        <button class='finished'><h2>Finished Projects</h2></button>
+        <button class='hibernating status'><h2>Hibernating Projects</h2></button>
+        <button class='frogged status'><h2>Frogged Projects</h2></button>
+    </div>
+        <div class='need status'>
+            {% if needUpdate %}
+                {% for project, update in needUpdate %}
+                    <div class="project col-xs-4">
+                        <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+                        <p> Last update was {{update}} days ago. </p>
+                        <br>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h2> No projects need updates </h2>
+            {% endif %}
         </div>
-    {% endfor %}
-</div>
-<div class=frogged>
-    <button><h2>Frogged Projects</h2></button>
-    {% for project in frogged %}
-        <div class=project>
-            <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+        <div class='updated status'>
+            {% for project, update in updated %}
+                <div class="project col-xs-4">
+                    <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+                    <p> Last update was {{update}} days ago. </p>
+                    <br>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
+        <div class='finished status'>
+            {% for project in finished %}
+                <div class="project col-xs-4">
+                    <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+                </div>
+            {% endfor %}
+        </div>
+        <div class='hibernating status'>
+            {% for project in hibernate %}
+                <div class="project col-xs-4">
+                    <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+                </div>
+            {% endfor %}
+        </div>
+        <div class='frogged status'>
+            {% for project in frogged %}
+                <div class="project col-xs-4">
+                    <a href="/projects/{{project.project_id}}"><h3 class=name> {{project.name}} </h3></a>
+                </div>
+            {% endfor %}
+        </div>
 <script>
     var mess = "{{counts['need update']}} projects haven't been updated in {{freq}} days!";
     alert(mess);
 </script>
+<script src=
+  "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.js">
+</script>
 
 <script src="/static/project.js"></script>
+
 <script>
     var counts = {{dict|safe}};
     donutChart(counts);
     var wips = {{wip|safe}};
     barChart(wips);
 </script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 {% endblock %}

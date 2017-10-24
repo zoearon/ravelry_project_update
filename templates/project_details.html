@@ -6,7 +6,7 @@
 <div class=userinfo>
 </div>
 <div class=project>
-    Project Name: {{project.name}}<br>
+    <h3>{{project.name}}</h3><br>
     <a href="https://www.ravelry.com/projects/{{username}}/{{project.rav_page}}">Ravelry Page</a><br>
     Pattern: {{project.pattern_name}}<br>
     Last Updated: {{project.updated_at}}<br>
@@ -20,9 +20,11 @@
   </div>
 </div>
 </div>
-<div class=pics>
+<div class="pics">
     {% for img in images %}
+      <div class="col-xs-12 col-md-6">
         <img src="{{img.url}}">
+      </div>
     {% endfor %}
 <div class=update>
     <button> <h3>Update Project </h3></button>
@@ -49,7 +51,7 @@
   $("#updateproject select option").each( function() {
       if ($(this).val() == {{project.status_id|tojson}}) {
           $(this).attr('selected', true);
-      } 
+      }
   });
 </script>
 

@@ -206,10 +206,10 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # In case tables haven't been created, create them
-    # db.create_all()
+    db.create_all()
 
-    # load_user()
-    # load_status()
-    # projects_response = api.projects('zo1414')
-    # load_projects('zo1414', projects_response)
-    sync_projects('zo1414')
+    load_user()
+    load_status()
+    projects_response = api.projects('zo1414')
+    load_projects('zo1414', projects_response)
+    # sync_projects('zo1414')

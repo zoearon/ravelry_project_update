@@ -1,0 +1,42 @@
+
+body {
+
+    color: white;
+    display: inline;
+    background-color: #B2B09B;
+
+}
+nav.navbar-inverse{
+    background-color: #233237;
+}
+.container div [style]{
+    display:block !important;
+}
+.col-xs-4 {
+    display: inline-block;
+    text-align: center;
+}
+}
+button {
+    display: inline-block;
+    color: #DB504A;
+}
+/*canvas {
+    display: block;
+}*/
+
+button {
+    display: inline-block;
+    background-color: #DB504A;
+    border: none;
+    color: white;
+    padding: 15px 15px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+a {
+    color: #233237;
+}
