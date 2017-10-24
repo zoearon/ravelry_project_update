@@ -6,7 +6,7 @@
 <div class=userinfo>
 </div>
 <div class=project>
-    Project Name: {{project.name}}<br>
+    <h3>{{project.name}}</h3><br>
     <a href="https://www.ravelry.com/projects/{{username}}/{{project.rav_page}}">Ravelry Page</a><br>
     Pattern: {{project.pattern_name}}<br>
     Last Updated: {{project.updated_at}}<br>
@@ -20,13 +20,30 @@
   </div>
 </div>
 </div>
-<div class=pics>
+<div class="row pics">
     {% for img in images %}
-        <img src="{{img.url}}">
+    <div class="col-xs-6 col-md-4">
+      <div class="thumbnail">
+        <img src="{{img.url}}" class="img-responsive">
+      </div>
+    </div>
     {% endfor %}
-<div class=update>
+</div>
+
+<div class="update">
     <button> <h3>Update Project </h3></button>
-    <form action="/projects/{{project.project_id}}" method="POST" id="updateproject" hidden>
+    <!-- Modal -->
+    <div id="updateproject" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Update</h4>
+          </div>
+          <div class="modal-body">
+    <form action="/projects/{{project.project_id}}" method="POST"  hidden>
         Notes: <textarea name="notes" form="updateproject">{{project.notes}}</textarea><br>
         Status: <select name="status">
             <option value="1">In progress</option>
@@ -42,14 +59,14 @@
         Photo URL:<input type="url" name="img-url"><br>
         <input type="submit"><input type="reset">
     </form>
-
+    </div>
 </div>
 
 <script type="text/javascript">
   $("#updateproject select option").each( function() {
       if ($(this).val() == {{project.status_id|tojson}}) {
           $(this).attr('selected', true);
-      } 
+      }
   });
 </script>
 

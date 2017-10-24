@@ -2,3 +2,10 @@ secrets.sh
 env/
 *pyc
 .coverage
+test/
+menv/
+venv/
+cron/
+geckodriver*
+htmlcov/
+.DS_store

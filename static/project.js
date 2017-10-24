@@ -15,7 +15,7 @@ $('.frogged').on('click', function() {
 });
 $('div div').toggle();
 
-var options = { responsive: true };
+var options = { responsive: false };
 
 
 function donutChart(counts) {

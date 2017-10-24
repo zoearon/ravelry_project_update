@@ -4,21 +4,22 @@ import requests
 import os
 import api
 
+
 def load_user():
     """ Add the current user to the database"""
 
     user_json = requests.get("https://api.ravelry.com/current_user.json",
                              auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                             os.environ['RAVELRY_PERSONAL_KEY'])).json()
-    
+                                   os.environ['RAVELRY_PERSONAL_KEY'])).json()
+
     user = user_json['user']
 
     # check if the current user is already in the database
     existing_user = User.query.get(user['id'])
-    
+
     if existing_user:
         pass
-    
+
     # if not add them
     else:
         ravelry_id = user['id']
@@ -41,6 +42,7 @@ def load_user():
 
     db.session.commit()
 
+
 def load_status():
     """ load status options into the database """
 
@@ -51,7 +53,7 @@ def load_status():
     status_json = requests.get("https://api.ravelry.com/" +
                                "projects/project_statuses.json",
                                auth=(os.environ['RAVELRY_ACCESS_KEY'],
-                               os.environ['RAVELRY_PERSONAL_KEY'])).json()
+                                     os.environ['RAVELRY_PERSONAL_KEY'])).json()
 
     statuses = status_json['project_statuses']
 
@@ -71,7 +73,7 @@ def load_projects(user, response):
     """Load projects for a user from Ravelry api into database"""
 
     projects = response.json()['projects']
-    
+
     user_ob = User.query.filter_by(username=user).one()
     user_ob.api_tag = response.headers['ETag']
 
@@ -92,7 +94,6 @@ def add_project(user, project):
     details, p_etag = api.project_details(user, project_id)
     project_details = details['project']
 
-    
     user_id = project['user_id']
     name = project['name']
     pattern_name = project['pattern_name']
@@ -100,7 +101,6 @@ def add_project(user, project):
     updated_at = project['updated_at']
     started_at = project['started']
     finished_at = project['completed']
-    photos_count = project['photos_count']
     progress = project['progress']
     rav_page = project['permalink']
 
@@ -137,7 +137,7 @@ def add_project(user, project):
 def sync_projects(user):
     """ Update the db with any changes from the api """
 
-    user_ob = User.query.filter_by(username = user).first()
+    user_ob = User.query.filter_by(username=user).first()
     etag = str(user_ob.api_etag)
     headers = {'If-None-Match': etag}
     print headers
@@ -147,12 +147,12 @@ def sync_projects(user):
     print projects_response.status_code
 
     if projects_response.status_code == 304:
-        
+
         return "No API updates"
 
     # if there are updates from the api
     elif projects_response.status_code == 200:
-        
+
         # update the users api_etag to the new tag
         new_etag = projects_response.headers['ETag']
         print new_etag
@@ -164,12 +164,12 @@ def sync_projects(user):
 
         # get the current projects for the user
         current = db.session.query(Project.project_id,
-                                            Project).join(User).filter(
-                                            User.username == user).all()
-        
+                                   Project).join(User).filter(
+                                   User.username == user).all()
+
         # create a dict where keys are project id and value is project object
         current_projects = dict(current)
-        
+
         for project in projects:
             project_id = project['id']
 
@@ -189,7 +189,7 @@ def sync_projects(user):
             # if project is not in the database add it
             else:
                 add_project(user, project)
-        
+
         db.session.commit()
 
         return "database updated"
@@ -206,12 +206,10 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # In case tables haven't been created, create them
-    # db.create_all()
+    db.create_all()
 
-    # load_user()
-    # load_status()
-    # projects_response = api.projects('zo1414')
-    # load_projects('zo1414', projects_response)
-    sync_projects('zo1414')
-
-
+    load_user()
+    load_status()
+    projects_response = api.projects('zo1414')
+    load_projects('zo1414', projects_response)
+    # sync_projects('zo1414')
