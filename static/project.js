@@ -38,10 +38,16 @@ function barChart(data) {
         options: {
             scales: {
                 xAxes: [{
-                    stacked: true
+                    stacked: true,
+                    gridLines: {
+            drawBorder: false,
+          }
                 }],
                 yAxes: [{
-                    stacked: true
+                    stacked: true,
+                    gridLines: {
+            drawBorder: false,
+          }, display: false
                 }]
             }
         }

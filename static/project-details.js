@@ -14,7 +14,10 @@ $('#updateproject select').change( function(evt){
     if (currentStatus == 2) {
        var message = "Congratulations for finishing a project! Be sure to set the finished date!";
        $('#flash').show();
-       $('#flash h3').html(message);
+       $('#flash').append(
+          '<div class="alert alert-info">
+            <h6>Congratulations for finishing a project! Be sure to set the finished date!</h6>
+          </div>');
        $('#flash').fadeOut(3000);
 
        $('#finished').show(); 

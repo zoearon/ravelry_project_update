@@ -149,29 +149,29 @@ class ServerTestsDatabaseSession(unittest.TestCase):
                       result.data)
         self.assertIn("Successful", result.data)
 
-class SeliniumTest(unittest.TestCase):
+# class SeliniumTest(unittest.TestCase):
 
-    def setUp(self):
-        self.browser = webdriver.Chrome(executable_path='../../chromedriver')
+#     def setUp(self):
+#         self.browser = webdriver.Chrome(executable_path='../../chromedriver')
 
-    def tearDown(self):
-        self.browser.quit()
+#     def tearDown(self):
+#         self.browser.quit()
 
-    def test_title(self):
-        self.browser.get('http://localhost:5000/')
-        self.assertEqual(self.browser.title, 'Projects')
+#     def test_title(self):
+#         self.browser.get('http://localhost:5000/')
+#         self.assertEqual(self.browser.title, 'Projects')
 
-    def test_login(self):
-        self.browser.get('http://localhost:5000/login')
-        self.assertEqual(self.browser.title, 'Login')
+#     def test_login(self):
+#         self.browser.get('http://localhost:5000/login')
+#         self.assertEqual(self.browser.title, 'Login')
 
-class SeliniumTestWithSessionDb(unittest.TestCase):
+# class SeliniumTestWithSessionDb(unittest.TestCase):
 
-    def setUp(self):
-        self.browser = webdriver.Chrome(executable_path='../../chromedriver')
+#     def setUp(self):
+#         self.browser = webdriver.Chrome(executable_path='../../chromedriver')
 
-    def tearDown(self):
-        self.browser.quit()
+#     def tearDown(self):
+#         self.browser.quit()
    
 
 if __name__ == "__main__":

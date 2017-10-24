@@ -156,20 +156,20 @@ def view_projects():
                         "label": "Need Update",
                         "data": [counts['need update']],
                         "backgroundColor": [
-                            "red"
+                            "#B56357"
                         ],
                         "hoverBackgroundColor": [
-                            "red"
+                            "#B56357"
                         ]
                     },
                     {
                         "label": "Updated",
                         "data": [counts['updated']],
                         "backgroundColor": [
-                            "green"
+                            "#B4DBC0"
                         ],
                         "hoverBackgroundColor": [
-                            "green"
+                            "#B4DBC0"
                         ]
                     }] }
 
@@ -312,10 +312,10 @@ def react_page():
                         "label": "Need Update",
                         "data": [counts['need update']],
                         "backgroundColor": [
-                            "red"
+                            "blue"
                         ],
                         "hoverBackgroundColor": [
-                            "red"
+                            "#B56357"
                         ]
                     },
                     {
@@ -325,7 +325,7 @@ def react_page():
                             "green"
                         ],
                         "hoverBackgroundColor": [
-                            "green"
+                            "#B4DBC0"
                         ]
                     }] }
 
