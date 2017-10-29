@@ -49,7 +49,7 @@ function barChart(data) {
             drawBorder: false,
           }, display: false
                 }]
-            }
+            }, maintainAspectRatio: false
         }
     })
 $('#updateLegend').html(stackedBar.generateLegend());

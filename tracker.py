@@ -35,7 +35,7 @@ def time_difference_now(time):
 
     # days = diff.days + day_seconds
 
-    return diff.days
+    return int(diff.days)
 
 
 def sort_projects_by_update(projects, time):

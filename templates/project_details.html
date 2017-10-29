@@ -1,26 +1,24 @@
 {% extends 'base.html' %}
 
 {% block title %}{{project.name}}{% endblock %}
-{% block head %}<script src="https://code.jquery.com/jquery.js"></script>{% endblock %}
+{% block head %}{% endblock %}
 {% block content %}
-<div class=userinfo>
-</div>
-<div class=project>
+<div class="col-xs-1"></div>
+<div class="project col-xs-6">
     <h3>{{project.name}}</h3><br>
     <a href="https://www.ravelry.com/projects/{{username}}/{{project.rav_page}}">Ravelry Page</a><br>
     Pattern: {{project.pattern_name}}<br>
-    Last Updated: {{project.updated_at}}<br>
+    Last Updated: {{project.updated_at.strftime('%m-%d-%Y')}}<br>
     Status: {{project.status.status if project.status else " "}}<br>
-    Started: {{project.started_at if project.started_at else " "}}<br>
+    Started: {{project.started_at.strftime('%m-%d-%Y') if project.started_at else " "}}<br>
     Notes: {{project.notes if project.notes else " "}}<br>
     Progress: {{project.progress}}<div class="progress">
   <div class="progress-bar" role="progressbar" aria-valuenow="{{project.progress}}"
   aria-valuemin="0" aria-valuemax="100" style="width: {{project.progress}}%">
-<!--     <span class="sr-only">70% Complete</span> -->
   </div>
 </div>
 </div>
-<div class="row pics">
+<div class="row pics col-xs-12">
     {% for img in images %}
     <div class="col-xs-6 col-md-4">
       <div class="thumbnail">
@@ -29,9 +27,10 @@
     </div>
     {% endfor %}
 </div>
-
-<div class="update">
+<div class="col-xs-1"></div>
+<div class="update col-xs-6">
     <button> <h3>Update Project </h3></button>
+    <div class="bottom"></div>
     <!-- Modal -->
     <div id="updateproject" class="modal fade" role="dialog">
       <div class="modal-dialog">
@@ -42,26 +41,35 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Update</h4>
           </div>
+          <form action="/projects/{{project.project_id}}" method="POST" id="update-project">
           <div class="modal-body">
-    <form action="/projects/{{project.project_id}}" method="POST"  hidden>
-        Notes: <textarea name="notes" form="updateproject">{{project.notes}}</textarea><br>
-        Status: <select name="status">
+    
+         <div class="form-group">
+        <label for="notes">Notes: </label><textarea name="notes" id="notes" form="update-project" class="form-control" rows="5">{{project.notes if project.notes else " "}}</textarea><br>
+      </div>
+        <div class="form-group">
+        <label for="stat">Status: </label><select name="status">
             <option value="1">In progress</option>
             <option value="2">Fishished</option>
             <option value="3">Hibernating</option>
             <option value="4">Frogged/ Deleted</option>
         </select><br>
+      </div>
         <div id="slidecontainer">
-          Progress: <span id="loacation"></span> % <br>
+          <label>Progress: </label><span id="loacation"></span> % <br>
           <input type="range" min="1" max="100" value="{{project.progress|safe}}" class="slider" id="myRange" name="progress">
         </div>
         <span id="finished" hidden>Finished: <input type="date" name="finished_at"><br> </span>
-        Photo URL:<input type="url" name="img-url"><br>
-        <input type="submit"><input type="reset">
-    </form>
+        <label>Photo URL:</label><input type="url" name="img-url"><br>
     </div>
+     <div class="modal-footer">
+        <button type="submit" class="btn btn-default">Submit</button>
+        <button type="reset" class="btn btn-default">Clear</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+      </form>
 </div>
-
+</div>
 <script type="text/javascript">
   $("#updateproject select option").each( function() {
       if ($(this).val() == {{project.status_id|tojson}}) {
@@ -69,6 +77,10 @@
       }
   });
 </script>
-
+<script type="text/javascript">
+$('.update button').on('click', function() {
+  $('#updateproject').modal('show');
+});
+</script>
 <script src="/static/project-details.js"></script>
 {% endblock %}

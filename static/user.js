@@ -1,6 +1,4 @@
-$('button.update').on('click', function() {
-    $('.update').toggle();
-});
+
 
 function submitUserUpdate(evt) {
     evt.preventDefault();

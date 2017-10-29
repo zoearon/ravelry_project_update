@@ -164,34 +164,31 @@ def view_projects():
                         "label": "Need Update",
                         "data": [counts['need update']],
                         "backgroundColor": [
-<<<<<<< HEAD
                             "#B56357"
                         ],
                         "hoverBackgroundColor": [
-                            "#B56357"
-=======
+
                             "#FF6F59"
                         ],
                         "hoverBackgroundColor": [
                             "#FF6F59"
->>>>>>> 20811bd27c617b503aac9258117eff901e3b5be1
                         ]
                     },
                     {
                         "label": "Updated",
                         "data": [counts['updated']],
                         "backgroundColor": [
-<<<<<<< HEAD
+
                             "#B4DBC0"
                         ],
                         "hoverBackgroundColor": [
                             "#B4DBC0"
-=======
+
                             "#43AA8B"
                         ],
                         "hoverBackgroundColor": [
                             "#43AA8B"
->>>>>>> 20811bd27c617b503aac9258117eff901e3b5be1
+
                         ]
                     }]}
 
@@ -415,7 +412,7 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     # run the app
     app.run(port=5000, host='0.0.0.0')
