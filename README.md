@@ -1,8 +1,8 @@
 
 
-Loose Thread is an app to promote and prompt users to update their knitting project pages. The user's projects are collected from the popular knitting site, Ravelry. The user is alerted upon returning to the site about how many projects have not been updated in a given number of days. They can then get details on their projects and update the project. Their updates are saved in both loose threads and on the corresponding Ravelry page. Users also can subscribe to text alerts reminding them weekly about how many projects need to be updated.
+Loose Threads is an app to promote and prompt users to update their knitting project pages. The user's projects are collected from the popular knitting site, Ravelry. The user is alerted upon returning to the site about how many projects have not been updated in a given number of days. They can then get details on their projects and update the project. Their updates are saved in both loose threads and on the corresponding Ravelry page. Users also can subscribe to text alerts reminding them weekly about how many projects need to be updated.
 
-## Table of Contents🐛
+## Table of Contents
 
 * [Tech Stack](#tech-stack)
 * [Features](#features)
@@ -49,7 +49,7 @@ Clone repository:
 ```
 $ git clone https://github.com/zoearon/ravelry_project_update.git
 ```
-Create a virtual environment🔮:
+Create a virtual environment:
 ```
 $ virtualenv env
 ```
@@ -57,7 +57,7 @@ Activate the virtual environment:
 ```
 $ source env/bin/activate
 ```
-Install dependencies🔗:
+Install requirements🔗:
 ```
 $ pip install -r requirements.txt
 ```
