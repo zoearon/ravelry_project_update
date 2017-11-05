@@ -10,6 +10,8 @@ import api
 import requests
 import os
 from seed import sync_projects
+import datetime
+from sqlalchemy.sql.functions import func
 
 app = Flask(__name__)
 
@@ -272,40 +274,45 @@ def react_page():
     if 'user' not in session:
         return redirect("/login")
 
-    # Get finished projects
-    fin_projects = db.session.query(Project).join(Status).filter(
-               Project.user_id == session['user'],
-               Status.status == "Finished").all()
-
-    # Get hibernating projects
-    hib_projects = db.session.query(Project).join(Status).filter(
-               Project.user_id == session['user'],
-               Status.status == "Hibernating").all()
-
-    # Get frogged projects
-    frog_projects = db.session.query(Project).join(Status).filter(
-               Project.user_id == session['user'],
-               Status.status == "Frogged").all()
-
-    # Get the projects for the current user and are in progress
-    wip_projects = db.session.query(Project).join(Status).filter(
-               Project.user_id == session['user'],
-               Status.status == "In progress").order_by(Project.updated_at).all()
-
     # get project update time
     freq = db.session.query(User.update_time).filter(
            User.user_id == session['user']).one()[0]
 
-    # sort the in progress projects into 2 groups based on update needs
-    need_update, updated = tracker.sort_projects_by_update(wip_projects, freq)
+    NOW = datetime.datetime.now()
 
-    projects_by_type = {"finished": fin_projects,
-                        "hibernate": hib_projects,
-                        "frogged": frog_projects,
-                        "need update": need_update,
-                        "updated": updated}
+    # Get finished projects
+    fin_projects = db.session.query(func.count(Project.project_id)).join(Status).filter(
+               Project.user_id == session['user'],
+               Status.status == "Finished").first()[0]
 
-    counts = {k: len(v) for k,v in projects_by_type.items()}
+    # Get hibernating projects
+    hib_projects = db.session.query(func.count(Project.project_id)).join(Status).filter(
+               Project.user_id == session['user'],
+               Status.status == "Hibernating").first()[0]
+
+    # Get frogged projects
+    frog_projects = db.session.query(func.count(Project.project_id)).join(Status).filter(
+               Project.user_id == session['user'],
+               Status.status == "Frogged").first()[0]
+
+    # Get the projects for the current user and are in progress
+    need_update = db.session.query(func.count(Project.project_id)).join(Status).filter(
+               Project.user_id == session['user'],
+               Project.updated_at < (NOW - datetime.timedelta(days = freq)),
+               Status.status == "In progress").first()[0]
+
+    updated = db.session.query(func.count(Project.project_id)).join(Status).filter(
+               Project.user_id == session['user'],
+               Project.updated_at > (NOW - datetime.timedelta(days = freq)),
+               Status.status == "In progress").first()[0]
+
+    counts = {"finished": int(fin_projects),
+                        "hibernate": int(hib_projects),
+                        "frogged": int(frog_projects),
+                        "need update": int(need_update),
+                        "updated": int(updated)}
+
+    # counts = {k: len(v) for k,v in projects_by_type.items()}
 
     data_dict = {
                 "labels": [k for k in sorted(counts.keys())],
@@ -364,21 +371,7 @@ def react_page():
 @app.route('/projects-json/<status>')
 def project_list(status):
 
-    # # Get finished projects
-    # fin_projects = db.session.query(Project.name, Project.project_id).join(Status).filter(
-    #            Project.user_id == session['user'],
-    #            Status.status == "Finished").all()
-
-    # # Get hibernating projects
-    # hib_projects = db.session.query(Project).join(Status).filter(
-    #            Project.user_id == session['user'],
-    #            Status.status == "Hibernating").all()
-
-    # # Get frogged projects
-    # frog_projects = db.session.query(Project).join(Status).filter(
-    #            Project.user_id == session['user'],
-    #            Status.status == "Frogged").all()
-
+    
     # # Get the projects for the current user and are in progress
     # wip_projects = db.session.query(Project).join(Status).filter(
     #            Project.user_id == session['user'],
@@ -391,12 +384,28 @@ def project_list(status):
     # # sort the in progress projects into 2 groups based on update needs
     # need_update, updated = tracker.sort_projects_by_update(wip_projects, freq)
     session['user'] = 463097
-    print status
-    projects = db.session.query(Project.name, Project.project_id).join(Status).filter(
-        Project.user_id == session['user'],
-        Status.status == status).all()
-    print projects
-    print jsonify(projects=projects)
+    NOW = datetime.datetime.now()
+    if str(status) == "Need Update":
+        status = 'In progress'
+        freq = db.session.query(User.update_time).filter(
+               User.user_id == session['user']).one()[0]
+        projects = db.session.query(Project.name, Project.project_id).join(Status).filter(
+            Project.user_id == session['user'],
+            Project.updated_at < (NOW - datetime.timedelta(days = freq)),
+            Status.status == status).all()
+
+    elif str(status) == 'Updated':
+        status = u'In progress'
+        freq = db.session.query(User.update_time).filter(
+               User.user_id == session['user']).one()[0]
+        projects = db.session.query(Project.name, Project.project_id).join(Status).filter(
+            Project.user_id == session['user'],
+            Project.updated_at > (NOW - datetime.timedelta(days = freq)),
+            Status.status == status).all()
+    else:
+        projects = db.session.query(Project.name, Project.project_id).join(Status).filter(
+            Project.user_id == session['user'],
+            Status.status == status).all()
     return jsonify(projects=projects)
 
 if __name__ == "__main__":
