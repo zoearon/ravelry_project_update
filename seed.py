@@ -3,6 +3,7 @@ import datetime
 import requests
 import os
 import api
+from passlib.hash import bcrypt
 
 
 def load_user():
@@ -26,7 +27,7 @@ def load_user():
         username = user['username']
         profile_img = user['photo_url']
         update_time = 14
-        password = "password"
+        password =  bcrypt.using(rounds=13).hash("password")
         subscribe = True
         phone_num = "5103266229"
 

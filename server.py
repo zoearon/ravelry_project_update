@@ -23,6 +23,11 @@ app.secret_key = "secret"
 # Raise error if undefine Jinja variable
 app.jinja_env.undefined = StrictUndefined
 
+# flask-login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
 
 @app.before_request
 def add_tests():
@@ -96,6 +101,18 @@ def check_user():
 
     return redirect(route)
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = tracker.check_login(username, password)        
+        if user:
+            login_user(user)
+            return redirect('/user')
+        else:
+            return redirect('/login')
+    else:
 
 @app.route('/projects')
 def view_projects():
