@@ -2,6 +2,8 @@ from jinja2 import StrictUndefined
 
 from flask import Flask, jsonify, render_template, redirect, request, flash, session, g
 from flask_debugtoolbar import DebugToolbarExtension
+from flask.ext.login import LoginManager, UserMixin, \
+                                login_required, login_user, logout_user 
 
 from model import connect_to_db, db, User, Project, Status, Image
 # import datetime
@@ -82,24 +84,24 @@ def logout():
     return redirect('/login')
 
 
-@app.route('/login', methods=['GET'])
-def login():
-    """ show the login form """
+# @app.route('/login', methods=['GET'])
+# def login():
+#     """ show the login form """
 
-    return render_template("login.html")
+#     return render_template("login.html")
 
 
-@app.route('/login', methods=['POST'])
-def check_user():
-    """ log the user in """
+# @app.route('/login', methods=['POST'])
+# def check_user():
+#     """ log the user in """
 
-    # get the user name from the post form
-    user = request.form.get("username")
-    password = request.form.get("password")
+#     # get the user name from the post form
+#     user = request.form.get("username")
+#     password = request.form.get("password")
 
-    route = tracker.check_login(user, password)
+#     route = tracker.check_login(user, password)
 
-    return redirect(route)
+#     return redirect(route)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
