@@ -14,7 +14,7 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
     profile_img = db.Column(db.String(200))
-    password = db.Column(db.String(20), nullable=False)
+    password = db.Column(db.String(200), nullable=False)
     update_time = db.Column(db.Integer)
     phone_num = db.Column(db.String(15))
     email = db.Column(db.String(100))

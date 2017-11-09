@@ -19,27 +19,27 @@ def load_user():
     existing_user = User.query.get(user['id'])
 
     if existing_user:
-        pass
+        User.query.delete()
 
     # if not add them
-    else:
-        ravelry_id = user['id']
-        username = user['username']
-        profile_img = user['photo_url']
-        update_time = 14
-        password =  bcrypt.using(rounds=13).hash("password")
-        subscribe = True
-        phone_num = "5103266229"
+    ravelry_id = user['id']
+    username = user['username']
+    profile_img = user['photo_url']
+    update_time = 14
+    password =  bcrypt.using(rounds=13).hash("password")
+    is_active = True
+    subscribe = True
+    phone_num = "5103266229"
 
-        new_user = User(user_id=ravelry_id,
-                        username=username,
-                        profile_img=profile_img,
-                        password=password,
-                        update_time=update_time,
-                        phone_num=phone_num,
-                        subscribed=subscribe)
+    new_user = User(user_id=ravelry_id,
+                    username=username,
+                    profile_img=profile_img,
+                    password=password,
+                    update_time=update_time,
+                    phone_num=phone_num,
+                    subscribed=subscribe)
 
-        db.session.add(new_user)
+    db.session.add(new_user)
 
     db.session.commit()
 
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     db.create_all()
 
     load_user()
-    load_status()
-    projects_response = api.projects('zo1414')
-    load_projects('zo1414', projects_response)
+    # load_status()
+    # projects_response = api.projects('zo1414')
+    # load_projects('zo1414', projects_response)
     # sync_projects('zo1414')

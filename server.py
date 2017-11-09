@@ -115,7 +115,7 @@ def login():
         else:
             return redirect('/login')
     else:
-
+        return render_template("login.html")
 @app.route('/projects')
 def view_projects():
     """ View the current users projects """
@@ -440,7 +440,7 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    # DebugToolbarExtension(app)
+    DebugToolbarExtension(app)
 
     # run the app
     app.run(port=5000, host='0.0.0.0')

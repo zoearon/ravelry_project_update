@@ -11,10 +11,8 @@ def check_login(user, password):
     """ check if a users login credetials are correct """
 
     # query for any users with that username
-    active_user = db.session.query(password, User).filter(User.username == user,
+    active_user = db.session.query(User.password, User).filter(User.username == user,
                                     ).first()
-
-
 
     # if there is a matching user
     if active_user and bcrypt.verify(password, active_user[0]):
