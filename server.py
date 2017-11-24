@@ -84,38 +84,38 @@ def logout():
     return redirect('/login')
 
 
-# @app.route('/login', methods=['GET'])
-# def login():
-#     """ show the login form """
-
-#     return render_template("login.html")
-
-
-# @app.route('/login', methods=['POST'])
-# def check_user():
-#     """ log the user in """
-
-#     # get the user name from the post form
-#     user = request.form.get("username")
-#     password = request.form.get("password")
-
-#     route = tracker.check_login(user, password)
-
-#     return redirect(route)
-
-@app.route("/login", methods=["GET", "POST"])
+@app.route('/login', methods=['GET'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = tracker.check_login(username, password)        
-        if user:
-            login_user(user)
-            return redirect('/user')
-        else:
-            return redirect('/login')
-    else:
-        return render_template("login.html")
+    """ show the login form """
+
+    return render_template("login.html")
+
+
+@app.route('/login', methods=['POST'])
+def check_user():
+    """ log the user in """
+
+    # get the user name from the post form
+    user = request.form.get("username")
+    password = request.form.get("password")
+
+    route = tracker.check_login(user, password)
+
+    return redirect(route)
+
+# @app.route("/login", methods=["GET", "POST"])
+# def login():
+#     if request.method == 'POST':
+#         username = request.form['username']
+#         password = request.form['password']
+#         user = tracker.check_login(username, password)        
+#         if user:
+#             login_user(user)
+#             return redirect('/user')
+#         else:
+#             return redirect('/login')
+#     else:
+#         return render_template("login.html")
 @app.route('/projects')
 def view_projects():
     """ View the current users projects """

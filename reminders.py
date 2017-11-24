@@ -6,12 +6,7 @@ import datetime
 from server import app
 from model import connect_to_db, db, User, Project, Status, Image
 
-def send_message():
-
-    print "git commit"
-
-
-def send_text(text, recipient = os.environ['MY_PHONE']):
+def send_text(text, recipient = os.environ['MY_PHONE']):  # pragma: no cover
 
 
     # Your Account SID from twilio.com/console

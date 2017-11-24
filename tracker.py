@@ -17,8 +17,8 @@ def check_login(user, password):
     # if there is a matching user
     if active_user and bcrypt.verify(password, active_user[0]):
         flash( "Login Successful")
-        # session['user'] = active_user[1].user_id
-        return active_user[1]
+        session['user'] = active_user[1].user_id
+        return '/projects'
     # if there is not a user with that username and password combo
     else:
         flash("Login Failed")

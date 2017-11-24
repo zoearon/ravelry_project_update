@@ -176,18 +176,10 @@ class ServerTestsDatabaseSession(unittest.TestCase):
                       result.data)
         self.assertIn("Successful", result.data)
 
-<<<<<<< HEAD
 # class SeliniumTest(unittest.TestCase):
 
 #     def setUp(self):
-#         self.browser = webdriver.Chrome(executable_path='../../chromedriver')
-=======
-
-class SeliniumTest(unittest.TestCase):
-
-    def setUp(self):
-        self.browser = webdriver.Chrome("../chromedriver")
->>>>>>> 20811bd27c617b503aac9258117eff901e3b5be1
+#         self.browser = webdriver.Chrome("../chromedriver")
 
 #     def tearDown(self):
 #         self.browser.quit()
@@ -200,25 +192,6 @@ class SeliniumTest(unittest.TestCase):
 #         self.browser.get('http://localhost:5000/login')
 #         self.assertEqual(self.browser.title, 'Login')
 
-<<<<<<< HEAD
-# class SeliniumTestWithSessionDb(unittest.TestCase):
-=======
-
-class SeliniumTestWithSessionDb(unittest.TestCase):
->>>>>>> 20811bd27c617b503aac9258117eff901e3b5be1
-
-#     def setUp(self):
-#         self.browser = webdriver.Chrome(executable_path='../../chromedriver')
-
-<<<<<<< HEAD
-#     def tearDown(self):
-#         self.browser.quit()
-   
-=======
-    def tearDown(self):
-        self.browser.quit()
-
->>>>>>> 20811bd27c617b503aac9258117eff901e3b5be1
 
 if __name__ == "__main__":
     unittest.main()

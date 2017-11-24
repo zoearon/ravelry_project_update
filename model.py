@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
+from passlib.hash import bcrypt
 db = SQLAlchemy()
 
 
@@ -21,7 +22,7 @@ class User(db.Model):
     subscribed = db.Column(db.Boolean, nullable=False)
     api_etag = db.Column(db.String(100))
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<User username= %s>" % (self.username)
 
 
@@ -47,7 +48,7 @@ class Project(db.Model):
     user = db.relationship("User", backref='projects')
     status = db.relationship("Status", backref='projects')
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "< Project name= %s>" % (self.name)
 
 
@@ -61,11 +62,11 @@ class Status(db.Model):
     status_id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.String(20), unique=True)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "<Status status= %s id= %s>" % (self.status, self.status_id)
 
 
-class Image(db.Model):
+class Image(db.Model):  
     """ An image for a a project. """
 
     __tablename__ = "images"
@@ -76,7 +77,7 @@ class Image(db.Model):
 
     project = db.relationship("Project", backref='images')
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return "< Image id= %s>" % (self.img_id)
 
 
@@ -85,7 +86,7 @@ class Image(db.Model):
 def example_data():
     user = User(username="abc",
                 user_id=1,
-                password="123",
+                password=bcrypt.using(rounds=13).hash("123"),
                 subscribed=True
                 )
     db.session.add(user)
