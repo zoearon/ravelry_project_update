@@ -18,11 +18,11 @@ def check_login(user, password):
     if active_user and bcrypt.verify(password, active_user[0]):
         flash( "Login Successful")
         session['user'] = active_user[1].user_id
-        return '/projects'
+        return '/user'
     # if there is not a user with that username and password combo
     else:
         flash("Login Failed")
-        return None
+        return '/login'
 
 
 def time_difference_now(time):

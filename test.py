@@ -19,12 +19,12 @@ class ServerTests(unittest.TestCase):
 
     def test_no_user_yet(self):
         result = self.client.get("/")
-        self.assertIn("Log In", result.data)
-        self.assertNotIn("Log Out", result.data)
+        self.assertIn("Login", result.data)
+        self.assertNotIn("Logout", result.data)
 
     def test_login_form(self):
         result = self.client.get("/login")
-        self.assertIn("Log In", result.data)
+        self.assertIn("Login", result.data)
         self.assertIn("username", result.data)
         self.assertNotIn("abc", result.data)
 
@@ -32,7 +32,7 @@ class ServerTests(unittest.TestCase):
         """Test user page works. """
 
         result = self.client.get("/user", follow_redirects=True)
-        self.assertIn("Log In", result.data)
+        self.assertIn("Login", result.data)
         self.assertIn("password", result.data)
         self.assertNotIn("abc", result.data)
 
@@ -68,7 +68,7 @@ class ServerTestsDatabase(unittest.TestCase):
                                   data={'username': "abc", 'password': "123"},
                                   follow_redirects=True)
         self.assertIn("abc", result.data)
-        self.assertIn("Log Out", result.data)
+        self.assertIn("Logout", result.data)
         self.assertIn("Successful", result.data)
         self.assertNotIn("password", result.data)
 
@@ -128,7 +128,7 @@ class ServerTestsDatabaseSession(unittest.TestCase):
 
         result = self.client.get("/user")
         self.assertIn("abc", result.data)
-        self.assertIn("Log Out", result.data)
+        self.assertIn("Logout", result.data)
         self.assertNotIn("password", result.data)
 
     def test_logout(self):
@@ -136,7 +136,7 @@ class ServerTestsDatabaseSession(unittest.TestCase):
 
         result = self.client.get("/logout", follow_redirects=True)
 
-        self.assertIn("Log In", result.data)
+        self.assertIn("Login", result.data)
         self.assertIn("username", result.data)
         self.assertNotIn("abc", result.data)
 
@@ -151,7 +151,7 @@ class ServerTestsDatabaseSession(unittest.TestCase):
         """Test project details page. """
 
         result = self.client.get("/projects/1")
-        self.assertIn("Log Out", result.data)
+        self.assertIn("Logout", result.data)
         self.assertIn("knit hat", result.data)
         self.assertIn("Test", result.data)
         self.assertNotIn("username", result.data)
@@ -165,7 +165,7 @@ class ServerTestsDatabaseSession(unittest.TestCase):
                                   data={'notes': "FINISHED",
                                         'img-url': 'https://cdn0.iconfinder.com/data/icons/the-essential/30/check_ok-512.png'},
                                   follow_redirects=True)
-        self.assertIn("Log Out", result.data)
+        self.assertIn("Logout", result.data)
         self.assertIn("knit hat", result.data)
         self.assertIn("Test", result.data)
         self.assertIn('FINISHED', result.data)
