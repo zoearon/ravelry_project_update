@@ -5,6 +5,7 @@ from freezegun import freeze_time
 from server import app
 from model import db, example_data, connect_to_db
 import api
+from seed import sync_projects
 
 
 class ServerTests(unittest.TestCase):
@@ -36,6 +37,15 @@ class ServerTests(unittest.TestCase):
         self.assertIn("Login", result.data)
         self.assertIn("password", result.data)
         self.assertNotIn("abc", result.data)
+
+    def test_project_no_user(self):
+        """ Test that the project page redirects to login if no current user """
+
+        result = self.client.get("/projects", follow_redirects=True)
+        self.assertIn("Login", result.data)
+        self.assertIn("password", result.data)
+        self.assertNotIn("abc", result.data)
+
 
 @freeze_time("2017-10-31")
 class ServerTestsDatabase(unittest.TestCase):
@@ -113,6 +123,11 @@ class ServerTestsDatabaseSession(unittest.TestCase):
 
         api.post_add_image = _mock_post_add_image
 
+        def _mock_sync_update(user):
+            return "test update"
+
+        sync_projects = _mock_sync_update
+
         def _mock_post_project_api_update(project, up_notes,
                                           up_status, up_progress, user):
             pass
@@ -183,6 +198,18 @@ class ServerTestsDatabaseSession(unittest.TestCase):
         self.assertIn("https://cdn0.iconfinder.com/data/icons/the-essential/30/check_ok-512.png",
                       result.data)
         self.assertIn("Successful", result.data)
+
+    def test_user_update(self):
+        """ Test when a user updates their profile information """
+
+        pass
+        '/user/update'
+
+    def test_user_sync(self):
+        """ Test mock of user sync function """
+
+        result = self.client.get("/sync")
+        self.assertIn("test update", result)
 
 # class SeliniumTest(unittest.TestCase):
 

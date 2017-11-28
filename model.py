@@ -87,7 +87,8 @@ def example_data():
     user = User(username="abc",
                 user_id=1,
                 password=bcrypt.using(rounds=13).hash("123"),
-                subscribed=True
+                subscribed=True,
+                api_etag="123abc"
                 )
     db.session.add(user)
     project = Project(project_id=1,
