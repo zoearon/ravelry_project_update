@@ -1,6 +1,7 @@
 import unittest
 from selenium import webdriver
 
+from freezegun import freeze_time
 from server import app
 from model import db, example_data, connect_to_db
 import api
@@ -36,7 +37,7 @@ class ServerTests(unittest.TestCase):
         self.assertIn("password", result.data)
         self.assertNotIn("abc", result.data)
 
-
+@freeze_time("2017-10-31")
 class ServerTestsDatabase(unittest.TestCase):
     """ Flask tests that use database"""
 
@@ -55,6 +56,9 @@ class ServerTestsDatabase(unittest.TestCase):
         # Create tables and add sample data
         db.create_all()
         example_data()
+
+        def f_date():
+            assert datetime.datetime.now() == datetime.datetime(2017, 10, 31)
 
     def tearDown(self):
         """Do at end of every test."""
@@ -81,7 +85,7 @@ class ServerTestsDatabase(unittest.TestCase):
         self.assertNotIn("Successful", result.data)
         self.assertIn("password", result.data)
 
-
+@freeze_time("2017-10-31")
 class ServerTestsDatabaseSession(unittest.TestCase):
     """Flask tests that use the database."""
 
@@ -100,6 +104,9 @@ class ServerTestsDatabaseSession(unittest.TestCase):
         # Create tables and add sample data
         db.create_all()
         example_data()
+
+        def f_date():
+            assert datetime.datetime.now() == datetime.datetime(2017, 10, 31)
 
         def _mock_post_add_image(project, user, up_image):
             pass
