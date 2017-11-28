@@ -45,7 +45,12 @@ def message():
 
 
 def format_message(count, freqency):
-    """ write the text for each user who is subsribed """
+    """ write the text for each user who is subsribed 
+
+    >>> mess = format_message(7, 14)
+    >>> mess == "7 projects haven't been updated in 14 days!"
+        True
+    """
 
     text = "%s projects haven't been updated in %s days!" % (count, freqency)
     return text

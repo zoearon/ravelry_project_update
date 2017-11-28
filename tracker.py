@@ -25,7 +25,7 @@ def check_login(user, password):
         return '/login'
 
 
-def time_difference_now(time):
+def time_difference_now(time):  # pragma: no cover
     """ Find how much time has passed since a datetime in days"""
 
     NOW = datetime.datetime.now()

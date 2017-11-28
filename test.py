@@ -163,7 +163,8 @@ class ServerTestsDatabaseSession(unittest.TestCase):
 
         result = self.client.post("/projects/1",
                                   data={'notes': "FINISHED",
-                                        'img-url': 'https://cdn0.iconfinder.com/data/icons/the-essential/30/check_ok-512.png'},
+                                        'img-url': 'https://cdn0.iconfinder.com/data/icons/the-essential/30/check_ok-512.png',
+                                        'status': '2'},
                                   follow_redirects=True)
         self.assertIn("Logout", result.data)
         self.assertIn("knit hat", result.data)

@@ -102,16 +102,18 @@ def example_data():
     db.session.add(project)
     status = Status(status_id=1, status="Test")
     db.session.add(status)
+    status_1 = Status(status_id=2, status="Test_update")
+    db.session.add(status_1)
     image = Image(url="https://i.vimeocdn.com/portrait/58832_300x300",
                   project_id=1,
                   )
     db.session.add(image)
     try:
         db.session.commit()
-    except:
+    except: # pragma: no cover
         db.session.rollback()
 
-def connect_to_db(app, db_uri="postgresql:///projects"):
+def connect_to_db(app, db_uri="postgresql:///projects"): # pragma: no cover
     """Connect the database to our Flask app."""
 
     # Configure to use our PstgreSQL database
@@ -122,7 +124,7 @@ def connect_to_db(app, db_uri="postgresql:///projects"):
 
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # As a convenience, if we run this module interactively, it will leave
     # you in a state of being able to work with the database directly.
 

@@ -427,7 +427,7 @@ def project_list(status):
             Status.status == status).all()
     return jsonify(projects=projects)
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     import sys
     if sys.argv[-1] == "jstest":
         JS_TESTING_MODE = True
