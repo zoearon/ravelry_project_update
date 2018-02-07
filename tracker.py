@@ -7,16 +7,17 @@ from passlib.hash import bcrypt
 from PIL import Image as pilImage
 from flask import flash, session
 
+
 def check_login(user, password):
     """ check if a users login credetials are correct """
 
     # query for any users with that username
-    active_user = db.session.query(User.password, User).filter(User.username == user,
-                                    ).first()
+    active_user = db.session.query(User.password, User).filter(User.username ==
+                                                               user,).first()
 
     # if there is a matching user
     if active_user and bcrypt.verify(password, active_user[0]):
-        flash( "Login Successful")
+        flash("Login Successful")
         session['user'] = active_user[1].user_id
         return '/user'
     # if there is not a user with that username and password combo

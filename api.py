@@ -2,6 +2,15 @@ from model import db, User, Image
 import requests
 import os
 from PIL import Image as pilImage
+from rauth import OAuth2Service
+
+rav = OAuth2Service(
+    client_id=os.environ['RAVELRY_ACCESS_KEY'],
+    client_secret=os.environ['RAVELRY_PERSONAL_KEY'],
+    name='ravelry',
+    authorize_url='https://www.ravelry.com/oauth2/auth',
+    access_token_url='https://www.ravelry.com/oauth2/token',
+    base_url='https://www.ravelry.com/')
 
 auth = (os.environ['RAVELRY_ACCESS_KEY'], os.environ['RAVELRY_PERSONAL_KEY'])
 access_key = os.environ['RAVELRY_ACCESS_KEY']

@@ -9,3 +9,4 @@ cron/
 geckodriver*
 htmlcov/
 .DS_store
+.orig
