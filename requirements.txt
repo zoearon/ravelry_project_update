@@ -7,7 +7,7 @@ Flask-DebugToolbar==0.10.0
 Flask-SQLAlchemy==2.0
 idna==2.6
 itsdangerous==0.24
-Jinja2==2.7.3
+Jinja2==2.11.3
 MarkupSafe==0.23
 olefile==0.44
 Pillow==4.3.0
